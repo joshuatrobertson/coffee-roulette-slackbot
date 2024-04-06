@@ -1,5 +1,5 @@
-import dotenv
-from flask import Flask, request
+import pytz
+from flask import Flask, request, jsonify
 from slack_bolt import App
 from slack_bolt.adapter.flask import SlackRequestHandler
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -40,6 +40,7 @@ handler = SlackRequestHandler(slack_app)
 # Assuming a simple structure to store user responses
 user_responses = {}
 
+
 # Function to generate the weekly message TODO: use GPT
 def generate_message_for_week():
     today = datetime.date.today()
@@ -51,7 +52,7 @@ def generate_message_for_week():
 # Function to post the weekly message
 def post_weekly_message():
     message_content = generate_message_for_week()
-    channel_id = "cds-coffee-roulette"  # Post to the coffee roulette channel
+    channel_id = "C06T4HJ4Y5Q"  # Post to the coffee roulette channel
     slack_app.client.chat_postMessage(channel=channel_id, text=message_content)
 
 
@@ -101,8 +102,20 @@ def slack_events():
     return handler.handle(request)
 
 
+@app.route('/slack/commands', methods=['POST'])
+def slack_commands():
+    command_text = request.form['text']
+    response_url = request.form['response_url']
+    # You can now process the command and respond accordingly
+    # This is a simple example that echoes back the command text
+    return jsonify({
+        "response_type": "in_channel",
+        "text": f"You sent the command with text: {command_text}"
+    })
+
+
 # Initialize the scheduler
-scheduler = BackgroundScheduler()
+scheduler = BackgroundScheduler(timezone=pytz.timezone('Europe/London'))
 scheduler.start()
 
 # Schedule the post_weekly_message function to run every Monday at 9:00 AM
