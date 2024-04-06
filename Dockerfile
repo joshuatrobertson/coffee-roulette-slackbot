@@ -13,17 +13,17 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         gcc \
         libpq-dev \
-        && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the application code into the container
-COPY . /app/
-
 # Expose the port that your app runs on
 EXPOSE 3000
 
-# Command to run your application
+# Copy the application code into the container
+COPY . /app/
+
+# Command to run your application using gunicorn
 CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:3000"]
