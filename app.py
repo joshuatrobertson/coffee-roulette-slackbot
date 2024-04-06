@@ -34,9 +34,6 @@ slack_app = App(
     signing_secret=slack_signing_secret
 )
 
-if __name__ == '__main__':
-    app.run(debug=True, port=os.getenv("PORT", default=5000))
-
 # Create a request handler for Slack events
 handler = SlackRequestHandler(slack_app)
 
