@@ -12,7 +12,6 @@ WORKDIR /app
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         gcc \
-        libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
@@ -21,6 +20,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose the port that your app runs on
 EXPOSE 3000
+EXPOSE 5000
 
 # Copy the application code into the container
 COPY . /app/
