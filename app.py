@@ -147,5 +147,4 @@ scheduler.add_job(post_weekly_message, 'cron', day_of_week='mon', hour=9, minute
 scheduler.add_job(pair_users, 'cron', day_of_week='wed', hour=13, minute=0)
 
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(port=5000)
