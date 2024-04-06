@@ -30,7 +30,7 @@ def generate_message_for_week():
 # Function to post the weekly message
 def post_weekly_message():
     message_content = generate_message_for_week()
-    channel_id = "YOUR_CHANNEL_ID"  # Specify the channel ID where you want to post
+    channel_id = "cds-coffee-roulette"  # Post to the coffee roulette channel
     slack_app.client.chat_postMessage(channel=channel_id, text=message_content)
 
 
