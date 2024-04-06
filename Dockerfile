@@ -19,7 +19,7 @@ COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose the port that your app runs on
-EXPOSE 3000
+EXPOSE 5000
 
 # Command to run your application using gunicorn
 CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:3000"]
