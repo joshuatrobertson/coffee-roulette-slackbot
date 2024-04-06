@@ -105,13 +105,20 @@ def slack_events():
 @app.route('/slack/commands', methods=['POST'])
 def slack_commands():
     command_text = request.form['text']
-    response_url = request.form['response_url']
-    # You can now process the command and respond accordingly
-    # This is a simple example that echoes back the command text
-    return jsonify({
-        "response_type": "in_channel",
-        "text": f"You sent the command with text: {command_text}"
-    })
+    command = request.form['command']  # The command text (e.g., "/coffee")
+
+    # Check if the command is "/coffee"
+    if command == "/coffee":
+        # Call the function to generate and post the weekly message
+        post_weekly_message()
+        # Acknowledge the command without sending a message to the channel
+        return jsonify(response_type="ephemeral", text="Coffee message is being posted!")
+    else:
+        # Handle other commands or provide a default response
+        return jsonify({
+            "response_type": "ephemeral",  # Only the user who typed the command will see this
+            "text": f"Received command '{command}', but I don't know what to do with it."
+        })
 
 
 # Initialize the scheduler
