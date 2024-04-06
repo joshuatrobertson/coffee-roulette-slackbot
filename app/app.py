@@ -83,17 +83,12 @@ def slack_events():
     return handler.handle(request)
 
 
-# Main entry point
-if __name__ == "__main__":
-    # Initialize the scheduler
-    scheduler = BackgroundScheduler()
-    scheduler.start()
+# Initialize the scheduler
+scheduler = BackgroundScheduler()
+scheduler.start()
 
-    # Schedule the post_weekly_message function to run every Monday at 9:00 AM
-    scheduler.add_job(post_weekly_message, 'cron', day_of_week='mon', hour=9, minute=0)
+# Schedule the post_weekly_message function to run every Monday at 9:00 AM
+scheduler.add_job(post_weekly_message, 'cron', day_of_week='mon', hour=9, minute=0)
 
-    # Schedule the pair_users function to run every Wednesday at 1:00 PM
-    scheduler.add_job(pair_users, 'cron', day_of_week='wed', hour=13, minute=0)
-
-    # Run the Flask app using Gunicorn
-    app.run(debug=True, host='0.0.0.0', port=3000)
+# Schedule the pair_users function to run every Wednesday at 1:00 PM
+scheduler.add_job(pair_users, 'cron', day_of_week='wed', hour=13, minute=0)
