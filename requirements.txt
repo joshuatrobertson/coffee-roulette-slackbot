@@ -1,6 +1,7 @@
-flask
-slack_bolt
-apscheduler
+click
+Flask
 gunicorn
-python-dotenv
-pytz
+itsdangerous
+Jinja2
+MarkupSafe
+Werkzeug
