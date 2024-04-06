@@ -101,6 +101,9 @@ def pair_users():
 def slack_events():
     return handler.handle(request)
 
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
 
 @app.route('/slack/commands', methods=['POST'])
 def slack_commands():
