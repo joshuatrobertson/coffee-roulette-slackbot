@@ -121,6 +121,11 @@ def slack_commands():
         })
 
 
+@app.route('/test', methods=['POST'])
+def test():
+    return 'It works!', 200
+
+
 # Initialize the scheduler
 scheduler = BackgroundScheduler(timezone=pytz.timezone('Europe/London'))
 scheduler.start()
