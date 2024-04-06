@@ -1,3 +1,4 @@
+import dotenv
 from flask import Flask, request
 from slack_bolt import App
 from slack_bolt.adapter.flask import SlackRequestHandler
@@ -10,13 +11,27 @@ from dotenv import load_dotenv
 # Load env variables
 load_dotenv()
 
+# Log the status of environment variables (for verification purposes)
+slack_bot_token = os.getenv('SLACK_BOT_TOKEN')
+slack_signing_secret = os.getenv('SLACK_SIGNING_SECRET')
+
+if slack_bot_token:
+    print("SLACK_BOT_TOKEN is set. First few characters: {}".format(slack_bot_token[:5]))
+else:
+    print("SLACK_BOT_TOKEN is not set.")
+
+if slack_signing_secret:
+    print("SLACK_SIGNING_SECRET is set. First few characters: {}".format(slack_signing_secret[:5]))
+else:
+    print("SLACK_SIGNING_SECRET is not set.")
+
 # Define the Flask application instance
 app = Flask(__name__)
 
 # Define the Slack Bolt app instance
 slack_app = App(
-    token=os.environ.get("SLACK_BOT_TOKEN"),
-    signing_secret=os.environ.get("SLACK_SIGNING_SECRET")
+    token=slack_bot_token,
+    signing_secret=slack_signing_secret
 )
 
 # Create a request handler for Slack events
@@ -24,7 +39,6 @@ handler = SlackRequestHandler(slack_app)
 
 # Assuming a simple structure to store user responses
 user_responses = {}
-
 
 # Function to generate the weekly message TODO: use GPT
 def generate_message_for_week():

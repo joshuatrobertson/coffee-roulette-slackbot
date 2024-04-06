@@ -2,4 +2,4 @@ flask
 slack_bolt
 apscheduler
 gunicorn
-dotenv
+python-dotenv
