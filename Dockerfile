@@ -26,4 +26,4 @@ EXPOSE 3000
 COPY . /app/
 
 # Command to run your application using gunicorn
-CMD ["gunicorn", "app.app:app", "--bind", "0.0.0.0:3000"]
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:3000"]
