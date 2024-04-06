@@ -5,6 +5,10 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import os
 import random
 import datetime
+from dotenv import load_dotenv
+
+# Load env variables
+load_dotenv()
 
 # Define the Flask application instance
 app = Flask(__name__)
@@ -18,11 +22,11 @@ slack_app = App(
 # Create a request handler for Slack events
 handler = SlackRequestHandler(slack_app)
 
-# Assuming a simple structure to store user responses. In production, consider using a database.
+# Assuming a simple structure to store user responses
 user_responses = {}
 
 
-# Function to generate the weekly message
+# Function to generate the weekly message TODO: use GPT
 def generate_message_for_week():
     today = datetime.date.today()
     # Customize this message as needed
