@@ -6,13 +6,16 @@ import os
 import random
 import datetime
 
+# Define the Flask application instance
 app = Flask(__name__)
 
+# Define the Slack Bolt app instance
 slack_app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET")
 )
 
+# Create a request handler for Slack events
 handler = SlackRequestHandler(slack_app)
 
 # Assuming a simple structure to store user responses. In production, consider using a database.
@@ -74,11 +77,13 @@ def pair_users():
     user_responses.clear()
 
 
+# Define the route for Slack events
 @app.route("/slack/events", methods=["POST"])
 def slack_events():
     return handler.handle(request)
 
 
+# Main entry point
 if __name__ == "__main__":
     # Initialize the scheduler
     scheduler = BackgroundScheduler()
@@ -90,4 +95,5 @@ if __name__ == "__main__":
     # Schedule the pair_users function to run every Wednesday at 1:00 PM
     scheduler.add_job(pair_users, 'cron', day_of_week='wed', hour=13, minute=0)
 
-    app.run(debug=True, port=3000)
+    # Run the Flask app using Gunicorn
+    app.run(debug=True, host='0.0.0.0', port=3000)
