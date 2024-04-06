@@ -101,15 +101,17 @@ def pair_users():
 def slack_events():
     return handler.handle(request)
 
+
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
+
 
 @app.route('/slack/commands', methods=['POST'])
 def slack_commands():
     command_text = request.form['text']
     command = request.form['command']  # The command text (e.g., "/coffee")
-
+    print("Received a slash command:", request.form)
     # Check if the command is "/coffee"
     if command == "/coffee":
         # Call the function to generate and post the weekly message
