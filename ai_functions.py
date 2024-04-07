@@ -5,12 +5,10 @@ load_dotenv()
 
 from transformers import pipeline
 
-instruct_pipeline = pipeline("text-generation", model="gpt2")
+generator = pipeline("text-generation", model="gpt-2")
 
-# Generate text
-prompt = "Once upon a time"
-generated_text = instruct_pipeline(prompt, max_length=150, do_sample=True)
+result = generator("Your input prompt here", max_length=50, num_return_sequences=3)
 
 
 def generate_weekly_message(date):
-    return generated_text + date.strftime("%B %d, %Y")
+    return result + date.strftime("%B %d, %Y")
