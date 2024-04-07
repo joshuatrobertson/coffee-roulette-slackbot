@@ -8,8 +8,7 @@ def generate_weekly_message(date):
         "Authorization": "Bearer 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"
     }
 
-    prompt = f"Generate a message for the week of {date.strftime('%B %d, %Y')}"
-
+    prompt = f"Compose an uplifting and motivational message for the team for the week of {date.strftime('%B %d, %Y')}, highlighting the importance of teamwork and looking forward to achieving our goals together."
     data = {
         "inputs": prompt,
     }
