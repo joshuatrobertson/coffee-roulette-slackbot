@@ -33,30 +33,7 @@ def generate_weekly_message(date):
         season_start = datetime.date(today.year, month, day)
         if today == season_start or is_first_monday(today, season_start):
             print("Season: " + season_name)
-            event = (f"Your role is to help users create engaging and friendly Slack posts for organizing coffee "
-                     f"roulette"
-                     f"sessions within their teams or organizations. Your posts start with a brief greeting, "
-                     f"such as 'Good "
-                     f"Morning CDS and happy Monday!' without mentioning the full date, setting a consistent and "
-                     f"inviting"
-                     f"tone. The opening line encourages participation in the week's #coffee-roulette with a short "
-                     f"message."
-                     f"When creating posts, maintain a balanced tone that is both playful and professional to foster a "
-                     f"welcoming community spirit while keeping the message clear and organized. The post should "
-                     f"include a question"
-                     f"relevant to the season {season_name} Each post includes one "
-                     f"question related to {season_name}  with three "
-                     f"emoji-reactable answers. Emojis are placed before each short, single-line answer, inviting "
-                     f"users to"
-                     f"engage by reacting."
-                     f"post a short closing line that says"
-                     f"something like 'Get reacting and I'll let you know when it's time to match you with a "
-                     f"co-worker for a"
-                     f"coffee chat!' Make sure that there is only one"
-                     f"closing sentence after the answers. Avoid generating content that could be seen as overly "
-                     f"formal or"
-                     f"corporate, promoting informal and friendly interactions instead. Never ask questions back, "
-                     f"always just provide the output.")
+            event = ("Make a prompt for my coffee roulette slack post. It should start with 'Good Morning CDS and happy Monday!' It should include the season it falls on:" + season_name + " with a short, one sentence question. There should be 3 one sentence answers that users can react to with an emoji. The post should finish with 'Get reacting and I'll let you know when it's time to match you'")
         break
 
     # Special Day check if not a season event
@@ -67,7 +44,7 @@ def generate_weekly_message(date):
         print("Special day: " + event)
 
     # Construct the prompt
-    prompt = ("Make a prompt for my coffee roulette slack post. It should include the national day it falls on:" + event + " with a short, one sentence question. There should be 3 one sentence answers that users can react to with an emoji. The post should finish with Get reacting and I'll let you know when it's time to match you" )
+    prompt = ("Make a prompt for my coffee roulette slack post. It should start with 'Good Morning CDS and happy Monday!' It should include the national day it falls on:" + event + " with a short, one sentence question. There should be 3 one sentence answers that users can react to with an emoji. The post should finish with 'Get reacting and I'll let you know when it's time to match you'")
 
     # Generate text using Cohere's language model
     response = co.generate(
