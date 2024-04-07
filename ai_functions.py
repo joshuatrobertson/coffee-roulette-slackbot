@@ -5,7 +5,7 @@ load_dotenv()
 
 from transformers import pipeline
 
-instruct_pipeline = pipeline("text-generation", model="EleutherAI/mistral-7B-instruct-v0.2")
+instruct_pipeline = pipeline("text-generation", model="gpt2")
 
 # Generate text
 prompt = "Once upon a time"
