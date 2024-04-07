@@ -11,6 +11,9 @@ channel_id = "C06T4HJ4Y5Q"
 # Load environment variables from .env file
 load_dotenv()
 
+# Set openai.api_key to the OPENAI environment variable
+openai.api_key = os.environ["OPENAI"]
+
 # Initialize Slack Bolt app
 slack_app = App(
     token=os.getenv("SLACK_BOT_TOKEN"),
@@ -19,6 +22,7 @@ slack_app = App(
 
 # Assuming a simple structure to store user responses
 user_responses = {}
+
 
 
 # Function to post the weekly message

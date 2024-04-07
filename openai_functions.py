@@ -1,7 +1,6 @@
 import datetime
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
-
 def generate_weekly_message():
     # Load pre-trained GPT-2 model and tokenizer
     model_name = "gpt2-medium"
