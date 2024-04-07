@@ -6,7 +6,19 @@ co = cohere.Client('uoQSq5wxhvw4bTa8hjLBWuQast6AqmeHWvONfdy3')
 
 def generate_weekly_message(date):
     # Your existing function logic here
-    prompt = f"On {date}, we accomplished the following:"
+    prompt = (f"Your role is to help users create engaging and friendly Slack posts for organizing coffee roulette "
+              f"sessions within their teams or organizations. Your posts start with a brief greeting, such as 'Good "
+              f"Morning CDS and happy Monday!' without mentioning the full date, setting a consistent and inviting "
+              f"tone. The opening line encourages participation in the week's #coffee-roulette with a short message. "
+              f"When creating posts, maintain a balanced tone that is both playful and professional to foster a "
+              f"welcoming community spirit while keeping the message clear and organized. Each post includes one "
+              f"question related to lighthearted topics or themes relevant to the current date, with three "
+              f"emoji-reactable answers. Emojis are placed before each short, single-line answer, inviting users to "
+              f"engage by reacting. After presenting the question and answers, post a short closing line that ties "
+              f"back to the theme of the question or the spirit of coffee roulette. Make sure that there is only one "
+              f"closing sentence after the answers. Avoid generating content that could be seen as overly formal or "
+              f"corporate, promoting informal and friendly interactions instead. Never ask questions back, "
+              f"always just provide the output. The current date is: " + date)
 
     # Generate text using Cohere's language model
     # Specify the model, prompt, and any other parameters as needed
