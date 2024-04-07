@@ -3,15 +3,11 @@ import random
 import datetime
 from dotenv import load_dotenv
 from slack_bolt import App
-import openai
 
 channel_id = "C06T4HJ4Y5Q"
 
 # Load environment variables from .env file
 load_dotenv()
-
-# Set openai.api_key to the OPENAI environment variable
-openai.api_key = os.environ["OPENAI"]
 
 # Initialize Slack Bolt app
 slack_app = App(
