@@ -15,12 +15,13 @@ def generate_weekly_message(date):
               f"question related to lighthearted topics or themes relevant to the current date for example if the "
               f"date is in december you could write something about chistmas, with three"
               f"emoji-reactable answers. Emojis are placed before each short, single-line answer, inviting users to "
-              f"engage by reacting. After presenting the question and answers, post a short closing line that says "
+              f"engage by reacting and each emoji should be different. After presenting the question and answers, "
+              f"post a short closing line that says"
               f"something like 'Get reacting and I'll let you know when it's time to match you with a co-worker for a "
               f"coffee chat!' Make sure that there is only one"
               f"closing sentence after the answers. Avoid generating content that could be seen as overly formal or "
               f"corporate, promoting informal and friendly interactions instead. Never ask questions back, "
-              f"always just provide the output. The current date is: " + date)
+              f"always just provide the output. The current date is: " + date + "and we are in the UK")
 
     # Generate text using Cohere's language model
     # Specify the model, prompt, and any other parameters as needed
