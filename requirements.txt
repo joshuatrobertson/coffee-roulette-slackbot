@@ -1,10 +1,11 @@
 click
-Flask~=2.0.1
+Flask
 gunicorn
 itsdangerous
 Jinja2
 MarkupSafe
 Werkzeug
-pytz~=2024.1
-APScheduler~=3.10.4
-python-dotenv~=0.19.1
+slack_bolt
+python-dotenv
+apscheduler
+pytz
