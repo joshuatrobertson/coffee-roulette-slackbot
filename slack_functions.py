@@ -24,7 +24,6 @@ slack_app = App(
 user_responses = {}
 
 
-
 # Function to post the weekly message
 def post_weekly_message():
     message_content = generate_weekly_message()

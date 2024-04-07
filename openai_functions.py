@@ -1,13 +1,22 @@
+import os
+import google.generativeai as genai
 import datetime
-from transformers import GPT2LMHeadModel, GPT2Tokenizer
+from dotenv import load_dotenv
 
-def generate_weekly_message():
-    # Load pre-trained GPT-2 model and tokenizer
-    model_name = "gpt2-medium"
-    tokenizer = GPT2Tokenizer.from_pretrained(model_name)
-    model = GPT2LMHeadModel.from_pretrained(model_name)
+load_dotenv()
 
-    # Define the prompt
+genai.configure(api_key=os.environ["API_KEY"])
+model = genai.GenerativeModel('gemini-pro')
+
+# Set the OpenAI key
+
+# Set variables
+temperature = 0.2
+max_tokens = 256
+frequency_penalty = 0.0
+
+
+def generate_weekly_message(user_prompt):
     today = datetime.date.today()
     assistant_prompt = (
         "Your role is to help users create engaging and friendly Slack posts for organizing coffee "
@@ -23,14 +32,9 @@ def generate_weekly_message():
         "that ties back to the theme of the question or the spirit of coffee roulette. Make sure "
         "that there is only one closing sentence after the answers. Avoid generating content that "
         "could be seen as overly formal or corporate, promoting informal and friendly "
-        "interactions instead. Never ask questions back, always just provide the output. "
-    )
+        "interactions instead. Never ask questions back, always just provide the output. ")
 
-    # Generate content using the model
-    input_text = assistant_prompt + f" Today's date is {today}."
-    input_ids = tokenizer.encode(input_text, return_tensors="pt")
-    output = model.generate(input_ids, max_length=150, num_return_sequences=1, temperature=0.7)
+    response = model.generate_content(assistant_prompt + ". Todays date is " + today)
 
-    # Decode the generated text and return it
-    generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
-    return generated_text
+    message_content = response.choices[0].text.strip()
+    return message_content
