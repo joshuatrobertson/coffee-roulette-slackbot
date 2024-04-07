@@ -3,12 +3,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from transformers import pipeline
+from transformers import AutoTokenizer
+tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
 
-generator = pipeline("text-generation", model="gpt-2")
-
-result = generator("Your input prompt here", max_length=50, num_return_sequences=3)
+text = "Hello, how are you?"
+encoded_input = tokenizer(text, padding=True, truncation=True, return_tensors="pt")
 
 
 def generate_weekly_message(date):
-    return result + date.strftime("%B %d, %Y")
+    return encoded_input + date.strftime("%B %d, %Y")
