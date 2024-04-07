@@ -1,14 +1,17 @@
 from transformers import pipeline
-from dotenv import load_dotenv
+import requests
 
-load_dotenv()
+headers = {
+    "Authorization": "Bearer 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"
+}
 
-from transformers import AutoTokenizer
-tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+data = {
+    "inputs": "Your prompt here",
+}
 
-text = "Hello, how are you?"
-encoded_input = tokenizer(text, padding=True, truncation=True, return_tensors="pt")
+response = requests.post("https://api-inference.huggingface.co/models/gpt2", headers=headers, json=data)
+print(response.json())
 
 
 def generate_weekly_message(date):
-    return encoded_input + date.strftime("%B %d, %Y")
+    return response.json() + date.strftime("%B %d, %Y")
