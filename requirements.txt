@@ -1,12 +1,11 @@
 click
-Flask~=2.0.1
+Flask
 gunicorn
 itsdangerous
 Jinja2
 MarkupSafe
+Werkzeug
 slack_bolt
-python-dotenv~=0.19.1
-apscheduler~=3.10.4
-pytz~=2024.1
-openai
-transformers~=4.39.3
+python-dotenv
+apscheduler
+pytz
