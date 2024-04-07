@@ -18,6 +18,6 @@ def generate_weekly_message(date):
     )
 
     # Extracting the generated text from the response
-    generated_text = response.text
+    generated_text = response.generations[0].text
 
     return generated_text
