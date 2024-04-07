@@ -1,24 +1,16 @@
-import os
-from openai import OpenAI
 import datetime
-from dotenv import load_dotenv
-
-load_dotenv()
-
-client = OpenAI()
-
-# Set the OpenAI key
-OpenAI.api_key = os.environ["OPENAI"]
-
-# Set variables
-temperature = 0.2
-max_tokens = 256
-frequency_penalty = 0.0
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
 
-def generate_weekly_message(user_prompt):
+def generate_weekly_message():
+    # Load pre-trained GPT-2 model and tokenizer
+    model_name = "gpt2-medium"
+    tokenizer = GPT2Tokenizer.from_pretrained(model_name)
+    model = GPT2LMHeadModel.from_pretrained(model_name)
+
+    # Define the prompt
     today = datetime.date.today()
-    gpt_assistant_prompt = (
+    assistant_prompt = (
         "Your role is to help users create engaging and friendly Slack posts for organizing coffee "
         "roulette sessions within their teams or organizations. Your posts start with a brief "
         "greeting, such as 'Good Morning CDS and happy Monday!' without mentioning the full date, "
@@ -33,17 +25,13 @@ def generate_weekly_message(user_prompt):
         "that there is only one closing sentence after the answers. Avoid generating content that "
         "could be seen as overly formal or corporate, promoting informal and friendly "
         "interactions instead. Never ask questions back, always just provide the output. "
-        f"Who should I be, as I answer your prompt? {user_prompt}")
-
-    message = [{"role": "assistant", "content": gpt_assistant_prompt}]
-
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo-16k-0613",
-        messages=message,
-        temperature=temperature,
-        max_tokens=max_tokens,
-        frequency_penalty=frequency_penalty
     )
 
-    message_content = response.choices[0].text.strip()
-    return message_content
+    # Generate content using the model
+    input_text = assistant_prompt + f" Today's date is {today}."
+    input_ids = tokenizer.encode(input_text, return_tensors="pt")
+    output = model.generate(input_ids, max_length=150, num_return_sequences=1, temperature=0.7)
+
+    # Decode the generated text and return it
+    generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
+    return generated_text
