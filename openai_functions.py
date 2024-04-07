@@ -38,7 +38,7 @@ def generate_weekly_message(user_prompt):
     message = [{"role": "assistant", "content": gpt_assistant_prompt}]
 
     response = client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo-16k-0613",
         messages=message,
         temperature=temperature,
         max_tokens=max_tokens,
