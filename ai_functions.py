@@ -6,7 +6,7 @@ headers = {
 }
 
 data = {
-    "inputs": "Your prompt here",
+    "inputs": "Introduce yourself",
 }
 
 response = requests.post("https://api-inference.huggingface.co/models/gpt2", headers=headers, json=data)
