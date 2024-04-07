@@ -4,7 +4,6 @@ import datetime
 from dotenv import load_dotenv
 from slack_bolt import App
 import openai
-from openai_functions import generate_weekly_message
 
 channel_id = "C06T4HJ4Y5Q"
 
@@ -24,9 +23,17 @@ slack_app = App(
 user_responses = {}
 
 
+# Function to generate the weekly message
+def generate_message_for_week():
+    today = datetime.date.today()
+    # Customize this message as needed
+    message_content = f"What are your Goals/ Resolutions for this week? {today}"
+    return message_content
+
+
 # Function to post the weekly message
 def post_weekly_message():
-    message_content = generate_weekly_message()
+    message_content = generate_message_for_week()
     # Post to the coffee roulette channel
     print("API call for channel id " + channel_id)
     slack_app.client.chat_postMessage(channel=channel_id, text=message_content)

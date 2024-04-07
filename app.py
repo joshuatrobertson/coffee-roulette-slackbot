@@ -1,6 +1,4 @@
-import datetime
 from flask import Flask, request, jsonify
-from openai_functions import generate_weekly_message
 from slack_functions import slack_app, post_weekly_message, pair_users
 from apscheduler.schedulers.background import BackgroundScheduler
 import pytz
@@ -27,20 +25,18 @@ def health_check():
 @app.route('/slack/commands', methods=['POST'])
 def slack_commands():
     command_text = request.form['text']
-    today = datetime.date.today()
-    command = request.form['command']
+    command = request.form['command']  # The command text (e.g., "/coffee")
     print("Received a slash command:", request.form)
+    # Check if the command is "/coffee"
     if command == "/coffee":
         # Call the function to generate and post the weekly message
-        user_prompt = today.strftime("%B %d, %Y")  # Get the user prompt from request or any other source
-        message_content = generate_weekly_message(user_prompt)
-        # Post the message to Slack
-        slack_app.client.chat_postMessage(channel=request.form['channel_id'], text=message_content)
+        post_weekly_message()
+        # Acknowledge the command without sending a message to the channel
         return jsonify(response_type="ephemeral", text="Coffee message is being posted!")
     else:
         # Handle other commands or provide a default response
         return jsonify({
-            "response_type": "ephemeral",
+            "response_type": "ephemeral",  # Only the user who typed the command will see this
             "text": f"Received command '{command}', but I don't know what to do with it."
         })
 
