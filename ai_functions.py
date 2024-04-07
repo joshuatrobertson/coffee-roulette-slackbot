@@ -7,4 +7,4 @@ load_dotenv()
 
 
 def generate_weekly_message(date):
-    return "THIS IS A TEST" + date
+    return "THIS IS A TEST" + date.strftime("%B %d, %Y")
