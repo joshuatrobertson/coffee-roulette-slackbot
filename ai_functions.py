@@ -6,13 +6,14 @@ headers = {
 }
 
 data = {
-    "inputs": "Introduce yourself",
+    "inputs": "Your prompt here",
 }
 
 response = requests.post("https://api-inference.huggingface.co/models/gpt2", headers=headers, json=data)
 response_list = response.json()  # Assuming this returns a list like [{'generated_text': 'Your text here'}]
 # Extract the 'generated_text' from the first item in the list
-message_content = response_list[0]['generated_text'] + " " + date.strftime("%B %d, %Y")
+message_content = response_list[0]['generated_text']
+
 
 def generate_weekly_message(date):
     return message_content + date.strftime("%B %d, %Y")
