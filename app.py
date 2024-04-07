@@ -32,7 +32,7 @@ def slack_commands():
     print("Received a slash command:", request.form)
     if command == "/coffee":
         # Call the function to generate and post the weekly message
-        user_prompt = today.strftime()  # Get the user prompt from request or any other source
+        user_prompt = today.strftime("%B %d, %Y")  # Get the user prompt from request or any other source
         message_content = generate_weekly_message(user_prompt)
         # Post the message to Slack
         slack_app.client.chat_postMessage(channel=request.form['channel_id'], text=message_content)
