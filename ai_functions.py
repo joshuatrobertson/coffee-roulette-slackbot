@@ -67,37 +67,14 @@ def generate_weekly_message(date):
         print("Special day: " + event)
 
     # Construct the prompt
-    prompt = (f"Your role is to help users create engaging and friendly Slack posts for organizing coffee "
-                     f"roulette"
-                     f"sessions within their teams or organizations. Your posts start with a brief greeting, "
-                     f"such as 'Good "
-                     f"Morning CDS and happy Monday!' mentioning that it's {event}, setting a consistent and "
-                     f"inviting"
-                     f"tone. The opening line encourages participation in the week's #coffee-roulette with a short "
-                     f"message."
-                     f"When creating posts, maintain a balanced tone that is both playful and professional to foster a "
-                     f"welcoming community spirit while keeping the message clear and organized. The post should "
-                     f"include a question"
-                     f"relevant to the day it falls on, in this case {event} Each post includes one "
-                     f"question related to {event} with three "
-                     f"emoji-reactable answers. Emojis are placed before each short, single-line answer, inviting "
-                     f"users to"
-                     f"engage by reacting."
-                     f"post a short closing line that says"
-                     f"something like 'Get reacting and I'll let you know when it's time to match you with a "
-                     f"co-worker for a"
-                     f"coffee chat!' Make sure that there is only one"
-                     f"closing sentence after the answers. Avoid generating content that could be seen as overly "
-                     f"formal or"
-                     f"corporate, promoting informal and friendly interactions instead. Never ask questions back, "
-                     f"always just provide the output.")
+    prompt = ("Make a prompt for my coffee roulette slack post. It should include the national day it falls on:" + event + " with a short, one sentence question. There should be 3 one sentence answers that users can react to with an emoji. The post should finish with Get reacting and I'll let you know when it's time to match you" )
 
     # Generate text using Cohere's language model
     response = co.generate(
         model='command',
         prompt=prompt,
         max_tokens=150,
-        temperature=0.5
+        temperature=0.3
     )
 
     # Extracting the generated text from the response
