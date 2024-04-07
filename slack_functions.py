@@ -4,6 +4,8 @@ import datetime
 from dotenv import load_dotenv
 from slack_bolt import App
 
+from ai_functions import generate_weekly_message
+
 channel_id = "C06T4HJ4Y5Q"
 
 # Load environment variables from .env file
@@ -23,7 +25,7 @@ user_responses = {}
 def generate_message_for_week():
     today = datetime.date.today()
     # Customize this message as needed
-    message_content = f"What are your Goals/ Resolutions for this week? {today}"
+    message_content = generate_weekly_message(today)
     return message_content
 
 

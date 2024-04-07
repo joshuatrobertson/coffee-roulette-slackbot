@@ -6,5 +6,5 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def generate_weekly_message():
-    return "THIS IS A TEST"
+def generate_weekly_message(date):
+    return "THIS IS A TEST" + date
