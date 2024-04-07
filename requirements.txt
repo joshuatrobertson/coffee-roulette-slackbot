@@ -1,8 +1,6 @@
 click
 Flask
 gunicorn
-itsdangerous
-Jinja2
 MarkupSafe
 Werkzeug
 slack_bolt
