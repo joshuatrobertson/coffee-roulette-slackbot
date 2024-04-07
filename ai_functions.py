@@ -33,7 +33,7 @@ def generate_weekly_message(date):
         season_start = datetime.date(today.year, month, day)
         if today == season_start or is_first_monday(today, season_start):
             print("Season: " + season_name)
-            event = ("Make a prompt for my coffee roulette slack post. It should start with 'Good Morning CDS and happy Monday!' It should include the season it falls on:" + season_name + " with a short, one sentence question. There should be 3 short answers that users can react to with an emoji, include an emoji with every answer. The post should finish with 'Get reacting and I'll let you know when it's time to match you'")
+            event = ("Make a prompt for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday which means time for #coffeeroulette!' It should include the season it falls on: " + season_name + " Day with a short, one sentence question and a note around coffee roulette. There should be 3 short answers (no more than 5 words) that users can react to with an emoji, include an emoji with every answer. After the answers let people know they will be matched on Thursday and finish there. Dont finish with a closing point")
         break
 
     # Special Day check if not a season event
@@ -44,7 +44,7 @@ def generate_weekly_message(date):
         print("Special day: " + event)
 
     # Construct the prompt
-    prompt = ("Make a prompt for my coffee roulette slack post. It should start with 'Good Morning CDS and happy Monday!' It should include the national day it falls on:" + event + " with a short, one sentence question. There should be 3 short answers that users can react to with an emoji, include an emoji with every answer. The post should finish with 'Get reacting and I'll let you know when it's time to match you'")
+    prompt = ("Make a prompt for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday which means time for #coffeeroulette!' It should include the national day it falls on: " + event + " Day with a short, one sentence question and a note around coffee roulette. There should be 3 short answers (no more than 5 words) that users can react to with an emoji, include an emoji with every answer. After the answers let people know they will be matched on Thursday and finish there. Dont finish with a closing point")
 
     # Generate text using Cohere's language model
     response = co.generate(
