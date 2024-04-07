@@ -9,6 +9,6 @@ def generate_weekly_message(date):
     prompt = f"On {date}, we accomplished the following:"
 
     # Generate text using Cohere's language model
-    generated_text = cohere_client.generate(prompt, length=100)
+    generated_text = cohere_client.generate(prompt)
 
     return generated_text
