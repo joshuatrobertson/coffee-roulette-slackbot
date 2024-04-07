@@ -25,7 +25,7 @@ def generate_weekly_message(date):
     response = co.generate(
         model='command',  # Example model, choose the appropriate one for your use case
         prompt=prompt,
-        max_tokens=50,  # Example token count, adjust as necessary
+        max_tokens=150,  # Example token count, adjust as necessary
         temperature=0.5  # Example creativity setting, adjust as needed
     )
 
