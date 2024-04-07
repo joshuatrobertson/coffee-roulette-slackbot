@@ -32,6 +32,7 @@ def generate_weekly_message(date):
     for (month, day), season_name in seasons.items():
         season_start = datetime.date(today.year, month, day)
         if today == season_start or is_first_monday(today, season_start):
+            print("Season: " + season_name)
             event = (f"Your role is to help users create engaging and friendly Slack posts for organizing coffee "
                      f"roulette"
                      f"sessions within their teams or organizations. Your posts start with a brief greeting, "
@@ -60,8 +61,10 @@ def generate_weekly_message(date):
 
     # Special Day check if not a season event
     if not event:
+
         today_str = today.strftime('%d-%m')
         event = special_days.get(today_str, '')
+        print("Special day: " + event)
 
     # Construct the prompt
     prompt = (f"Your role is to help users create engaging and friendly Slack posts for organizing coffee "
