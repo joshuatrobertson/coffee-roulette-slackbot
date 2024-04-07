@@ -23,7 +23,7 @@ user_responses = {}
 
 # Function to generate the weekly message
 def generate_message_for_week():
-    today = datetime.date.today()
+    today = datetime.date.today().strftime('%d-%m')
     # Customize this message as needed
     message_content = generate_weekly_message(today)
     return message_content
