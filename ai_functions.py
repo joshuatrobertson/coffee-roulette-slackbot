@@ -1,19 +1,28 @@
 from transformers import pipeline
 import requests
-
-headers = {
-    "Authorization": "Bearer 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"
-}
-
-data = {
-    "inputs": "Your prompt here",
-}
-
-response = requests.post("https://api-inference.huggingface.co/models/gpt2", headers=headers, json=data)
-response_list = response.json()  # Assuming this returns a list like [{'generated_text': 'Your text here'}]
-# Extract the 'generated_text' from the first item in the list
-message_content = response_list[0]['generated_text']
+from datetime import datetime  # Import if not already done
 
 
 def generate_weekly_message(date):
-    return message_content + date.strftime("%B %d, %Y")
+    headers = {
+        "Authorization": "Bearer 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"
+    }
+
+    prompt = f"Generate a message for the week of {date.strftime('%B %d, %Y')}"
+
+    data = {
+        "inputs": prompt,
+    }
+
+    response = requests.post("https://api-inference.huggingface.co/models/gpt2", headers=headers, json=data)
+
+    if response.status_code == 200:
+        response_list = response.json()
+        if response_list and 'generated_text' in response_list[0]:
+            # Extract the 'generated_text' from the first item in the list
+            message_content = response_list[0]['generated_text']
+            return message_content
+        else:
+            return "Failed to generate message: unexpected response format."
+    else:
+        return f"Failed to generate message: HTTP status code {response.status_code}."
