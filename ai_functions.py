@@ -1,5 +1,4 @@
-import os
-import datetime
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
 from dotenv import load_dotenv
 
 load_dotenv()
