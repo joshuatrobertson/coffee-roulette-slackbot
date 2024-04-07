@@ -16,7 +16,7 @@ def is_first_monday(date, season_start):
     return False
 
 
-def generate_weekly_message():
+def generate_weekly_message(date):
     global event, today_str
     today = datetime.date.today()
     # Define your season start dates
