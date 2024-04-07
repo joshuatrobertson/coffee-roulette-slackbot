@@ -7,5 +7,4 @@ slack_bolt
 python-dotenv~=0.19.1
 apscheduler~=3.10.4
 pytz~=2024.1
-transformers~=4.39.3
-requests
+cohere
