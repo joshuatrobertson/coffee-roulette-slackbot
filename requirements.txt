@@ -4,7 +4,6 @@ gunicorn
 itsdangerous
 Jinja2
 MarkupSafe
-werkzeug==0.16.1
 slack_bolt
 python-dotenv~=0.19.1
 apscheduler~=3.10.4
