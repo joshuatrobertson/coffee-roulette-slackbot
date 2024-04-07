@@ -10,3 +10,4 @@ python-dotenv
 apscheduler
 pytz
 transformers
+torch
