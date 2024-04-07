@@ -1,0 +1,5 @@
+version: '1.0'
+services:
+  web:
+    command: gunicorn -w 4 -b 0.0.0.0:$PORT app:app
+    memory: 512Mi  # Adjust this value as needed
