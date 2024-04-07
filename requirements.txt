@@ -2,7 +2,7 @@ click
 Flask~=2.0.1
 gunicorn
 MarkupSafe
-Werkzeug
+Werkzeug==2.2.2
 slack_bolt
 python-dotenv~=0.19.1
 apscheduler~=3.10.4
