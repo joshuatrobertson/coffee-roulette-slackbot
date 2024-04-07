@@ -8,5 +8,3 @@ python-dotenv
 apscheduler
 pytz
 transformers
---find-links https://download.pytorch.org/whl/torch_stable.html
-torch
