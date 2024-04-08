@@ -2,15 +2,18 @@ import datetime
 import cohere
 
 event = ""
-prompt_start = ("Make a prompt for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday "
-                "which means time for # cds-coffee-roulette!'")
-prompt_end = (" with a short, one sentence question. There should be 3 short fun or lighthearted numbered answers "
-              "(no more than 5 words) that users can react to with an emoji around the theme, include a different emoji with every "
-              "answer. After the answers have a single closing sentence 'React with your preference, and we'll match "
-              "you for Coffee Roulette on Thursday!'")
 
 # Initialize the Cohere client with your API key
 co = cohere.Client('uoQSq5wxhvw4bTa8hjLBWuQast6AqmeHWvONfdy3')
+
+
+def write_prompt(day):
+    return ("Make a prompt for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday "
+            "which means time for #cds-coffee-roulette!' It should include the period it falls on: " + day + " with "
+            "a short, one sentence question and a note around coffee roulette. There should be 3 short answers (no "
+            "more than 5 words) that users can react to with an emoji, include a different with every answer. "
+            "After the answers have a single closing sentence 'React with your preference, and we'll match you "
+            "for Coffee Roulette on Thursday!'")
 
 
 def is_first_monday(date, season_start):
@@ -31,7 +34,7 @@ def generate_weekly_message(date):
         season_start = datetime.date(today.year, month, day)
         if today == season_start or is_first_monday(today, season_start):
             print("Season: " + season_name)
-            event = (prompt_start + "It should include the season it falls on: " + season_name + prompt_end)
+            event = (write_prompt(season_name))
         break
 
     # Special Day check if not a season event
@@ -41,11 +44,11 @@ def generate_weekly_message(date):
         print("Special day: " + event)
 
     # Construct the prompt
-    prompt = (prompt_start + " It should include the national day it falls on: " + event + prompt_end)
+    prompt = write_prompt(event)
 
     # Generate text using Cohere's language model
     response = co.generate(
-        model='command',
+        model='command-r-plus',
         prompt=prompt,
         max_tokens=150,
         temperature=0.2
