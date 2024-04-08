@@ -52,7 +52,6 @@ def post_weekly_message():
 
 
 def extract_emojis_from_message(message_content):
-    # Updated pattern to match lines starting with "1.", "2.", or "3." and containing emojis in colon notation
     emoji_pattern = r'^\d\.\s.*:(\w+):'
     emojis_list = re.findall(emoji_pattern, message_content, flags=re.MULTILINE)
     return emojis_list
