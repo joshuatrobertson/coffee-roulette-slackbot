@@ -34,7 +34,13 @@ def post_weekly_message():
     message_content = generate_message_for_week()
     # Post to the coffee roulette channel
     print("API call for channel id " + channel_id)
+    response = slack_app.client.chat_postMessage(channel=channel_id, text=message_content)
+    message_ts = response['ts']
     slack_app.client.chat_postMessage(channel=channel_id, text=message_content)
+
+
+def get_emojis():
+    return True
 
 
 # Handles the reaction_added event

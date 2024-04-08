@@ -33,6 +33,11 @@ def slack_commands():
         post_weekly_message()
         # Acknowledge the command without sending a message to the channel
         return jsonify(response_type="ephemeral", text="Coffee message is being posted!")
+    elif command == "/pair":
+        # Call the function to pair users
+        pair_users()
+        # Acknowledge the command without sending a message to the channel
+        return jsonify(response_type="ephemeral", text="Users are being paired!")
     else:
         # Handle other commands or provide a default response
         return jsonify({

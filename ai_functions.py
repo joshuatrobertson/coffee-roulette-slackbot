@@ -1,16 +1,20 @@
 import datetime
-
 import cohere
 
 event = ""
-prompt_start = ""
+prompt_start = ("Make a prompt for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday "
+                "which means time for # cds-coffee-roulette!'")
+prompt_end = (" with a short, one sentence question and a note around coffee roulette. There should be 3 short numbered answers "
+              "(no more than 5 words) that users can react to with an emoji around the theme, include a different emoji with every "
+              "answer. After the answers have a single closing sentence 'React with your preference, and we'll match "
+              "you for Coffee Roulette on Thursday!'")
 
 # Initialize the Cohere client with your API key
 co = cohere.Client('uoQSq5wxhvw4bTa8hjLBWuQast6AqmeHWvONfdy3')
 
 
 def is_first_monday(date, season_start):
-    """Check if the date is the first Monday after the season start."""
+    # Check if the date is the first Monday after the season start.
     if date.month == season_start.month and date.day >= season_start.day:
         if date.weekday() == 0:  # Monday
             return date - datetime.timedelta(days=7) < season_start
@@ -21,31 +25,23 @@ def generate_weekly_message(date):
     global event, today_str
     today = datetime.date.today()
     # Define your season start dates
-    seasons = {
-        (3, 20): "spring",
-        (6, 21): "summer",
-        (9, 23): "autumn",
-        (12, 21): "winter",
-    }
 
     # Season or first Monday check
-
     for (month, day), season_name in seasons.items():
         season_start = datetime.date(today.year, month, day)
         if today == season_start or is_first_monday(today, season_start):
             print("Season: " + season_name)
-            event = ("Make a prompt for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday which means time for #cds-coffee-roulette!' It should include the season it falls on: " + season_name + " Day with a short, one sentence question and a note around coffee roulette. There should be 3 short answers (no more than 5 words) that users can react to with an emoji, include a different with every answer. After the answers have a single closing sentence 'React with your preference, and we'll match you for Coffee Roulette on Thursday!'")
+            event = (prompt_start + "It should include the season it falls on: " + season_name + prompt_end)
         break
 
     # Special Day check if not a season event
     if not event:
-
         today_str = today.strftime('%d-%m')
         event = special_days.get(today_str, '')
         print("Special day: " + event)
 
     # Construct the prompt
-    prompt = ("Make a prompt for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday which means time for #cds-coffee-roulette!' It should include the national day it falls on: " + event + " Day with a short, one sentence question and a note around coffee roulette. There should be 3 short answers (no more than 5 words) that users can react to with an emoji, include a different emoji with every answer. After the answers have a single closing sentence 'React with your preference, and we'll match you for Coffee Roulette on Thursday!'")
+    prompt = (prompt_start + " It should include the national day it falls on: " + event + prompt_end)
 
     # Generate text using Cohere's language model
     response = co.generate(
@@ -61,6 +57,12 @@ def generate_weekly_message(date):
     return generated_text
 
 
+seasons = {
+    (3, 20): "spring",
+    (6, 21): "summer",
+    (9, 23): "autumn",
+    (12, 21): "winter",
+}
 special_days = {
     '02-01': "Science Fiction Day",
     '03-01': "Festival of Sleep Day",
