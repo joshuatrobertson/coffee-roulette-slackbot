@@ -38,6 +38,7 @@ def post_weekly_message():
     emojis = extract_emojis_from_message(message_content)
 
     for emoji in emojis:
+        print("Adding Emoji", emoji)
         try:
             slack_app.client.reactions_add(
                 channel=channel_id,
@@ -50,10 +51,9 @@ def post_weekly_message():
 
 def extract_emojis_from_message(message_content):
     # Updated pattern to match lines starting with "1.", "2.", or "3." and containing emojis in colon notation
-    emoji_pattern = r'^(?:1\.|2\.|3\.)\s.*?(:\w+:)$'
+    emoji_pattern = r'^(?:1|2|3)\s.*?(:\w+:)$'
     emojis = re.findall(emoji_pattern, message_content, flags=re.MULTILINE)
 
-    # Extract just the emoji names if needed, or keep them in colon notation depending on how you'll use them
     return emojis
 
 
