@@ -72,26 +72,50 @@ def handle_reaction_added(event, say):
 # Function to pair users and notify them
 def pair_users():
     pairs = []  # This will store tuples of user IDs
-    for reaction, users in user_responses.items():
-        random.shuffle(users)  # Randomize to avoid bias
-        # Simple pairing logic
-        while len(users) >= 2:
-            pairs.append((users.pop(), users.pop()))
-        if users:  # Handle the case where there's an odd number of users
-            if pairs:
-                pairs[random.randint(0, len(pairs) - 1)] += (users.pop(),)
-            else:  # If no pairs exist and there's only one user
-                pairs.append((users.pop(),))
+    all_unique_users = set()
+
+    # Collect all unique user IDs from reactions
+    for users in user_responses.values():
+        for user_id in users:
+            all_unique_users.add(user_id)
+
+    # Convert the set back to a list for pairing
+    unique_users_list = list(all_unique_users)
+    random.shuffle(unique_users_list)  # Randomise to avoid bias
+
+    # Pairing logic using the list of unique users
+    while len(unique_users_list) >= 2:
+        pairs.append((unique_users_list.pop(), unique_users_list.pop()))
+
+    # Handle the case where there's an odd number of users
+    if unique_users_list:
+        if pairs:
+            pairs[random.randint(0, len(pairs) - 1)] += (unique_users_list.pop(),)
+        else:
+            pairs.append((unique_users_list.pop(),))
 
     # Notify users of their pairs
     for pair in pairs:
-        for user_id in pair:
+        if len(pair) == 2:
+            user1, user2 = pair
             try:
-                # You can customize this message
-                message = "You've been paired for #cds-coffee-roulette! Please arrange a meeting."
-                slack_app.client.chat_postMessage(channel=user_id, text=message)
+                message_user1 = f"You've been paired with <@{user2}> for #cds-coffee-roulette! Please arrange a meeting."
+                message_user2 = f"You've been paired with <@{user1}> for #cds-coffee-roulette! Please arrange a meeting."
+                slack_app.client.chat_postMessage(channel=user1, text=message_user1)
+                slack_app.client.chat_postMessage(channel=user2, text=message_user2)
             except Exception as e:
-                print(f"Error sending message to {user_id}: {e}")
+                print(f"Error sending message to one of the users in the pair {pair}: {e}")
+        else:  # Handling a trio
+            user1, user2, user3 = pair
+            try:
+                message_user1 = f"You've been paired with <@{user2}> and <@{user3}> for #cds-coffee-roulette! Please arrange a meeting."
+                message_user2 = f"You've been paired with <@{user1}> and <@{user3}> for #cds-coffee-roulette! Please arrange a meeting."
+                message_user3 = f"You've been paired with <@{user1}> and <@{user2}> for #cds-coffee-roulette! Please arrange a meeting."
+                slack_app.client.chat_postMessage(channel=user1, text=message_user1)
+                slack_app.client.chat_postMessage(channel=user2, text=message_user2)
+                slack_app.client.chat_postMessage(channel=user3, text=message_user3)
+            except Exception as e:
+                print(f"Error sending message to one of the users in the trio {pair}: {e}")
 
     # Reset user_responses for the next round
     user_responses.clear()
