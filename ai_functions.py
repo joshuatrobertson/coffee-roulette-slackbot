@@ -11,7 +11,8 @@ def write_prompt(day):
     return ("Make a slack post for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday "
             "which means time for # cds-coffee-roulette!' It should include the period it falls on: " + day + " with "
             "a short, one sentence question. There should be 3 short answers (they should be numbered 1-3) (no "
-            "more than 5 words) that users can react to with an emoji, include a different with every answer. "
+            "more than 5 words) that users can react to with an emoji (use the slack format ':[emoji]:', include a "
+            "different with every answer."
             "After the answers have a single closing sentence 'React with your preference, and we'll match you "
             "for Coffee Roulette on Thursday!'")
 
