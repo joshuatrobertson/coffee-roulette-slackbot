@@ -4,7 +4,7 @@ import cohere
 event = ""
 prompt_start = ("Make a prompt for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday "
                 "which means time for # cds-coffee-roulette!'")
-prompt_end = (" with a short, one sentence question and a note around coffee roulette. There should be 3 short numbered answers "
+prompt_end = (" with a short, one sentence question. There should be 3 short fun or lighthearted numbered answers "
               "(no more than 5 words) that users can react to with an emoji around the theme, include a different emoji with every "
               "answer. After the answers have a single closing sentence 'React with your preference, and we'll match "
               "you for Coffee Roulette on Thursday!'")
