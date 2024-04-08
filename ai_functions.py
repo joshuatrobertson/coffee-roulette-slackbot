@@ -3,6 +3,7 @@ import datetime
 import cohere
 
 event = ""
+prompt_start = ""
 
 # Initialize the Cohere client with your API key
 co = cohere.Client('uoQSq5wxhvw4bTa8hjLBWuQast6AqmeHWvONfdy3')
@@ -33,7 +34,7 @@ def generate_weekly_message(date):
         season_start = datetime.date(today.year, month, day)
         if today == season_start or is_first_monday(today, season_start):
             print("Season: " + season_name)
-            event = ("Make a prompt for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday which means time for #coffeeroulette!' It should include the season it falls on: " + season_name + " Day with a short, one sentence question and a note around coffee roulette. There should be 3 short answers (no more than 5 words) that users can react to with an emoji, include a different with every answer. After the answers let people know they will be matched on Thursday and finish there. Dont finish with a closing point")
+            event = ("Make a prompt for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday which means time for #cds-coffee-roulette!' It should include the season it falls on: " + season_name + " Day with a short, one sentence question and a note around coffee roulette. There should be 3 short answers (no more than 5 words) that users can react to with an emoji, include a different with every answer. After the answers have a single closing sentence 'React with your preference, and we'll match you for Coffee Roulette on Thursday!'")
         break
 
     # Special Day check if not a season event
@@ -44,14 +45,14 @@ def generate_weekly_message(date):
         print("Special day: " + event)
 
     # Construct the prompt
-    prompt = ("Make a prompt for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday which means time for #coffeeroulette!' It should include the national day it falls on: " + event + " Day with a short, one sentence question and a note around coffee roulette. There should be 3 short answers (no more than 5 words) that users can react to with an emoji, include a different emoji with every answer. After the answers let people know they will be matched on Thursday and finish there. Dont finish with a closing point")
+    prompt = ("Make a prompt for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday which means time for #cds-coffee-roulette!' It should include the national day it falls on: " + event + " Day with a short, one sentence question and a note around coffee roulette. There should be 3 short answers (no more than 5 words) that users can react to with an emoji, include a different emoji with every answer. After the answers have a single closing sentence 'React with your preference, and we'll match you for Coffee Roulette on Thursday!'")
 
     # Generate text using Cohere's language model
     response = co.generate(
         model='command',
         prompt=prompt,
         max_tokens=150,
-        temperature=0.3
+        temperature=0.2
     )
 
     # Extracting the generated text from the response

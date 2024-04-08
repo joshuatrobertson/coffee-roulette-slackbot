@@ -68,7 +68,7 @@ def pair_users():
         for user_id in pair:
             try:
                 # You can customize this message
-                message = "You've been paired for CDS #coffee-roulette! Please arrange a meeting."
+                message = "You've been paired for #cds-coffee-roulette! Please arrange a meeting."
                 slack_app.client.chat_postMessage(channel=user_id, text=message)
             except Exception as e:
                 print(f"Error sending message to {user_id}: {e}")
