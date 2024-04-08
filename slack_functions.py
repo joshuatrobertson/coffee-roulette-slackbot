@@ -3,7 +3,7 @@ import random
 import datetime
 from dotenv import load_dotenv
 from slack_bolt import App
-
+import re
 from ai_functions import generate_weekly_message
 
 channel_id = "C06T4HJ4Y5Q"
@@ -32,15 +32,29 @@ def generate_message_for_week():
 # Function to post the weekly message
 def post_weekly_message():
     message_content = generate_message_for_week()
-    # Post to the coffee roulette channel
-    print("API call for channel id " + channel_id)
     response = slack_app.client.chat_postMessage(channel=channel_id, text=message_content)
-    message_ts = response['ts']
-    slack_app.client.chat_postMessage(channel=channel_id, text=message_content)
+    message_ts = response['ts']  # Capture the timestamp of the posted message
+
+    emojis = extract_emojis_from_message(message_content)
+
+    for emoji in emojis:
+        try:
+            slack_app.client.reactions_add(
+                channel=channel_id,
+                name=emoji,
+                timestamp=message_ts
+            )
+        except Exception as e:
+            print(f"Error adding reaction {emoji}: {e}")
 
 
-def get_emojis():
-    return True
+def extract_emojis_from_message(message_content):
+    # Updated pattern to match lines starting with "1.", "2.", or "3." and containing emojis in colon notation
+    emoji_pattern = r'^(?:1\.|2\.|3\.)\s.*?(:\w+:)$'
+    emojis = re.findall(emoji_pattern, message_content, flags=re.MULTILINE)
+
+    # Extract just the emoji names if needed, or keep them in colon notation depending on how you'll use them
+    return emojis
 
 
 # Handles the reaction_added event
