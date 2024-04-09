@@ -34,11 +34,20 @@ def generate_message_for_week():
 def post_weekly_message():
     message_content = generate_message_for_week()
     print("Generated content: " + message_content)
+
+    note = "\n\n---\nThis message was posted by the Coffee Roulette Bot. For any issues or inquiries, please contact @josh :josh-nyan-coffee:. \nKnown bugs: none :smile:"
+    message_content += note
+
     response = slack_app.client.chat_postMessage(channel=channel_id, text=message_content)
     message_ts = response['ts']  # Capture the timestamp of the posted message
     print("Timestamp of posted message: " + message_ts)
     emojis = extract_emojis_from_message(message_content)
     print("Extracted Emojis:", emojis)
+
+    # Check if exactly three emojis are extracted and if not recursively call the function
+    if len(emojis) != 3:
+        print("Error: Number of extracted emojis is not 3. Retrying...")
+        post_weekly_message()
 
     for emoji in emojis:
         print("Adding Emoji", emoji)
