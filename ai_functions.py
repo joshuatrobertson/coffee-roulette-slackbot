@@ -14,7 +14,7 @@ def write_prompt(day):
             "more than 5 words) that users can react to with an emoji which matches the sentence (use the slack format ':[emoji]:', include a"
             "different with every answer."
             "After the answers have a single closing sentence 'React with your preference, and we'll match you "
-            "for Coffee Roulette on Thursday!' Then add a few lines")
+            "for Coffee Roulette on Thursday!'")
 
 
 def is_first_monday(date, season_start):
