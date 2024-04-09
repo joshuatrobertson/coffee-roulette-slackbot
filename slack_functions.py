@@ -35,7 +35,9 @@ def post_weekly_message():
     message_content = generate_message_for_week()
     print("Generated content: " + message_content)
 
-    note = "\n\n---\nThis message was posted by the Coffee Roulette Bot. For any issues or inquiries, please contact @josh :josh-nyan-coffee:. \nKnown bugs: none :smile:"
+    note = ("\n\n---\nThis message was generated and posted by the @CDSCoffeeRouletteBot :robot_face: and therefore "
+            "sometimes my output may be wrong. For any issues or inquiries,"
+            "please contact @josh :josh-nyan-coffee:. \nKnown bugs: none :smile:")
     message_content += note
 
     response = slack_app.client.chat_postMessage(channel=channel_id, text=message_content)
