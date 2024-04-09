@@ -49,6 +49,7 @@ def post_weekly_message():
     # Check if exactly three emojis are extracted and if not recursively call the function
     if len(emojis) != 3:
         print("Error: Number of extracted emojis is not 3. Retrying...")
+        message_content = ""
         post_weekly_message()
 
     for emoji in emojis:
