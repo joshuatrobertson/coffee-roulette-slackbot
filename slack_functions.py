@@ -112,8 +112,8 @@ def pair_users():
         if len(pair) == 2:
             user1, user2 = pair
             try:
-                message_user1 = f"You've been paired with <@{user2}> for #cds-coffee-roulette! Please arrange a meeting."
-                message_user2 = f"You've been paired with <@{user1}> for #cds-coffee-roulette! Please arrange a meeting."
+                message_user1 = return_user_message_pair(user2)
+                message_user2 = return_user_message_pair(user1)
                 slack_app.client.chat_postMessage(channel=user1, text=message_user1)
                 slack_app.client.chat_postMessage(channel=user2, text=message_user2)
             except Exception as e:
@@ -121,9 +121,9 @@ def pair_users():
         else:  # Handling a trio
             user1, user2, user3 = pair
             try:
-                message_user1 = f"You've been paired with <@{user2}> and <@{user3}> for #cds-coffee-roulette! Please arrange a meeting."
-                message_user2 = f"You've been paired with <@{user1}> and <@{user3}> for #cds-coffee-roulette! Please arrange a meeting."
-                message_user3 = f"You've been paired with <@{user1}> and <@{user2}> for #cds-coffee-roulette! Please arrange a meeting."
+                message_user1 = return_user_message_trio(user2, user3)
+                message_user2 = return_user_message_trio(user1, user3)
+                message_user3 = return_user_message_trio(user2, user1)
                 slack_app.client.chat_postMessage(channel=user1, text=message_user1)
                 slack_app.client.chat_postMessage(channel=user2, text=message_user2)
                 slack_app.client.chat_postMessage(channel=user3, text=message_user3)
@@ -132,3 +132,9 @@ def pair_users():
 
     # Reset user_responses for the next round
     user_responses.clear()
+
+def return_user_message_trio(user1, user2):
+    return f"You've been paired with <@{user1}> and <@{user2}> for #cds-coffee-roulette! Please arrange a meeting."
+
+def return_user_message_pair(user1):
+    return f"You've been paired with <@{user1}> for #cds-coffee-roulette! Please arrange a meeting."
