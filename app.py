@@ -50,6 +50,11 @@ def slack_commands():
 def test():
     return 'It works!', 200
 
+@app.route("/slack/events", methods=["POST"])
+def slack_events():
+    print("Received event: ", request.data)
+    return slack_app.dispatch(request)
+
 
 # Initialize the scheduler
 scheduler = BackgroundScheduler(timezone=pytz.timezone('Europe/London'))
