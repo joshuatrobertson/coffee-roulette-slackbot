@@ -14,30 +14,63 @@ ibm_api_key = os.getenv("IBM_API_KEY")
 ibm_url = os.getenv("IBM_URL")
 ibm_env_id = os.getenv("IBM_ENVIRONMENT_ID")
 ibm_project_id = os.getenv("IBM_PROJECT_ID")
+ibm_access_token = os.getenv("IBM_ACCESS_TOKEN")
 
-wml_credentials = {
-    "url": "https://eu-de.ml.cloud.ibm.com",
-    "apikey": ibm_api_key
+
+
+
+import requests
+
+url = "https://eu-de.ml.cloud.ibm.com/ml/v1/text/generation?version=2023-05-29"
+
+body = {
+	"input": """<|system|>
+You are Granite Chat, an AI language model developed by IBM. You are a cautious assistant. You carefully follow instructions. You are helpful and harmless and you follow ethical guidelines and promote positive behavior. You always respond to greetings (for example, hi, hello, g'\''day, morning, afternoon, evening, night, what'\''s up, nice to meet you, sup, etc) with \"Hello! I am Granite Chat, created by IBM. How can I help you today?\". Please do not say anything else and do not start a conversation.
+<|assistant|>
+""",
+	"parameters": {
+		"decoding_method": "greedy",
+		"max_new_tokens": 900,
+		"repetition_penalty": 1.05
+	},
+	"model_id": "ibm/granite-13b-chat-v2",
+	"project_id": "70e505ca-088c-44cb-ba57-bbccd5c8b6b7",
+	"moderations": {
+		"hap": {
+			"input": {
+				"enabled": true,
+				"threshold": 0.5,
+				"mask": {
+					"remove_entity_value": true
+				}
+			},
+			"output": {
+				"enabled": true,
+				"threshold": 0.5,
+				"mask": {
+					"remove_entity_value": true
+				}
+			}
+		}
+	}
 }
 
-client = APIClient(wml_credentials)
-
-# To display example params enter
-GenParams().get_example_values()
-
-generate_params = {
-    GenParams.MAX_NEW_TOKENS: 25
+headers = {
+	"Accept": "application/json",
+	"Content-Type": "application/json",
+	"Authorization": "Bearer " + ibm_access_token
 }
 
-model = Model(
-    model_id=ModelTypes.FLAN_UL2,
-    params=generate_params,
-    credentials={
-        "apikey": ibm_api_key,
-        "url": "https://eu-de.ml.cloud.ibm.com"
-    },
-    project_id=ibm_project_id
+response = requests.post(
+	url,
+	headers=headers,
+	json=body
 )
+
+if response.status_code != 200:
+	raise Exception("Non-200 response: " + str(response.text))
+
+data = response.json()
 
 
 def write_prompt(day):
@@ -78,11 +111,7 @@ def generate_weekly_message(date):
         event = special_days.get(today_str, '')
         print("Special day: " + event)
 
-    prompt_message = write_prompt(event)
-    generated_response = model.generate(prompt=prompt_message)
-    print(generated_response['results'][0]['generated_text'])
-
-    return generated_response['results'][0]['generated_text']
+    return data
 
 
 seasons = {
