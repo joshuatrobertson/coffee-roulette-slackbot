@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from slack_bolt import App
 import re
 from ai_functions import generate_weekly_message
+import tempfile
 
 channel_id = "C06T4HJ4Y5Q"
 
@@ -42,6 +43,7 @@ def post_weekly_message():
 
     response = slack_app.client.chat_postMessage(channel=channel_id, text=message_content)
     message_ts = response['ts']  # Capture the timestamp of the posted message
+    store_message_ts(message_ts) # store it
     print("Timestamp of posted message: " + message_ts)
     emojis = extract_emojis_from_message(message_content)
     print("Extracted Emojis:", emojis)
@@ -70,74 +72,115 @@ def extract_emojis_from_message(message_content):
     return emojis_list
 
 
-# Handles the reaction_added event
+# handles the reaction_added event
 @slack_app.event("reaction_added")
 def handle_reaction_added(event, say):
-    user_id = event["user"]
-    reaction = event["reaction"]
-    # Store the user's reaction
-    if reaction in user_responses:
-        user_responses[reaction].append(user_id)
-        print("Reaction stored")
-    else:
-        user_responses[reaction] = [user_id]
+    current_ts = get_current_weekly_message_ts()  # Get the timestamp of the current weekly message
+    reaction_msg_ts = event['item']['ts']
+    if reaction_msg_ts == current_ts:
+        user_id = event['user']
+        reaction = event['reaction']
+        log_reaction(user_id, reaction)
+
+def log_reaction(user_id, reaction):
+    # log the user's reaction to a file
+    with open("reactions.txt", "a") as file:
+        file.write(f"{user_id},{reaction}\n")
+    print(f"Logged reaction {reaction} from user {user_id}")
+
+def read_reactions():
+    """Read reactions from the file and return a dictionary of user IDs and their reactions."""
+    reactions = {}
+    try:
+        with open("reactions.txt", "r") as file:
+            for line in file:
+                user_id, reaction = line.strip().split(',')
+                if user_id in reactions:
+                    reactions[user_id].append(reaction)
+                else:
+                    reactions[user_id] = [reaction]
+    except FileNotFoundError:
+        print("No reactions file found.")
+    return reactions
 
 
 # Function to pair users and notify them
 def pair_users():
-    pairs = []  # This will store tuples of user IDs
-    all_unique_users = set()
+    reactions = read_reactions()
+    unique_users = list(set(reactions.keys()))
+    random.shuffle(unique_users)
+    pairs = []
+    while len(unique_users) > 1:
+        pairs.append((unique_users.pop(), unique_users.pop()))
+    if unique_users:
+        pairs[-1] += (unique_users.pop(),)
+    notify_users(pairs)
+    clear_reaction_logs()
 
-    # Collect all unique user IDs from reactions
-    for users in user_responses.values():
-        for user_id in users:
-            all_unique_users.add(user_id)
-
-    # Convert the set back to a list for pairing
-    unique_users_list = list(all_unique_users)
-    random.shuffle(unique_users_list)  # Randomise to avoid bias
-
-    # Pairing logic using the list of unique users
-    while len(unique_users_list) >= 2:
-        pairs.append((unique_users_list.pop(), unique_users_list.pop()))
-
-    # Handle the case where there's an odd number of users
-    if unique_users_list:
-        if pairs:
-            pairs[random.randint(0, len(pairs) - 1)] += (unique_users_list.pop(),)
-        else:
-            pairs.append((unique_users_list.pop(),))
-
-    # Notify users of their pairs
+def notify_users(pairs):
     for pair in pairs:
         if len(pair) == 2:
-            user1, user2 = pair
-            try:
-                message_user1 = return_user_message_pair(user2)
-                message_user2 = return_user_message_pair(user1)
-                slack_app.client.chat_postMessage(channel=user1, text=message_user1)
-                slack_app.client.chat_postMessage(channel=user2, text=message_user2)
-                print(f"Pairing user: {user1} with {user2} ")
-            except Exception as e:
-                print(f"Error sending message to one of the users in the pair {pair}: {e}")
-        else:  # Handling a trio
-            user1, user2, user3 = pair
-            try:
-                message_user1 = return_user_message_trio(user2, user3)
-                message_user2 = return_user_message_trio(user1, user3)
-                message_user3 = return_user_message_trio(user2, user1)
-                slack_app.client.chat_postMessage(channel=user1, text=message_user1)
-                slack_app.client.chat_postMessage(channel=user2, text=message_user2)
-                slack_app.client.chat_postMessage(channel=user3, text=message_user3)
-                print(f"Pairing user: {user1} with {user2} with {user3}")
-            except Exception as e:
-                print(f"Error sending message to one of the users in the trio {pair}: {e}")
-
-    # Reset user_responses for the next round
-    user_responses.clear()
+            message_pair(pair[0], pair[1])
+        elif len(pair) == 3:
+            message_trio(pair[0], pair[1], pair[2])
 
 def return_user_message_trio(user1, user2):
     return f"You've been paired with <@{user1}> and <@{user2}> for #cds-coffee-roulette! Please arrange a meeting."
 
 def return_user_message_pair(user1):
     return f"You've been paired with <@{user1}> for #cds-coffee-roulette! Please arrange a meeting."
+
+def clear_reaction_logs():
+    open("reactions.txt", "w").close()
+
+# store the timestamp in timestamp_of_last_post.txt
+def store_message_ts(timestamp):
+    temp_file_path = ""
+    try:
+        # Create a temp file
+        with tempfile.NamedTemporaryFile(delete=False, mode='w', dir='.') as tmpfile:
+            temp_file_path = tmpfile.name
+            tmpfile.write(timestamp)
+
+        # Rename temp file replacing the old file
+        os.replace(temp_file_path, "timestamp_of_last_post.txt")
+    except Exception as e:
+        print(f"Failed to write timestamp: {e}")
+        # Cleanup if the rename failed
+        if temp_file_path and os.path.exists(temp_file_path):
+            os.unlink(temp_file_path)
+
+# get the weekly timestamp from the last post
+def get_current_weekly_message_ts():
+    try:
+        with open("timestamp_of_last_post.txt", "r") as file:
+            return file.read().strip()
+    except FileNotFoundError:
+        print("Timestamp file not found. Ensure the message is posted first.")
+        return None
+    except IOError as e:
+        print(f"Error reading timestamp file: {e}")
+        return None
+
+def pair_users():
+    """Pairs users based on logged reactions."""
+    reactions = read_reactions()
+    unique_users = set(reactions.keys())  # Unique users based on their reactions
+
+    # Logic to randomly shuffle and pair users
+    unique_users_list = list(unique_users)
+    random.shuffle(unique_users_list)
+    pairs = []
+
+    while len(unique_users_list) >= 2:
+        pairs.append((unique_users_list.pop(), unique_users_list.pop()))
+
+    # If an odd number of users, handle the last user
+    if unique_users_list:
+        # Could append to the last pair or create a special case for this user
+        if pairs:
+            pairs[-1] += (unique_users_list.pop(),)
+
+    # notify users of their pairs
+    notify_users(pairs)
+    clear_reaction_logs()  #  clear the file after pairing

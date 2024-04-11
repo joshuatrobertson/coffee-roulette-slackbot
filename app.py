@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from slack_functions import slack_app, post_weekly_message, pair_users
+from slack_functions import slack_app, post_weekly_message, pair_users, get_current_weekly_message_ts, store_message_ts
 from apscheduler.schedulers.background import BackgroundScheduler
 import pytz
 
