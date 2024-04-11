@@ -6,20 +6,31 @@ from ibm_watson import AssistantV2
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
 # Load the .env file
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-load_dotenv(dotenv_path)
+load_dotenv()
 
 event = ""
-assistant_id = "19854e78-7ee5-403f-ba10-e3c8023bc9c6"
+ibm_assistant_id = os.getenv("IBM_ASSISTANT_ID")
+print("Assistant ID: " + ibm_assistant_id)
+ibm_api_key = os.getenv("IBM_API_KEY")
+print("API KEY: " + ibm_api_key)
+ibm_url = os.getenv("IBM_URL")
+print("URL: " + ibm_url)
 
 
 # Initialise Watson Assistant client
-authenticator = IAMAuthenticator(os.getenv("IBM_API_KEY"))
+authenticator = IAMAuthenticator(ibm_api_key)
 assistant = AssistantV2(
     version='2022-04-07',
     authenticator=authenticator
 )
-assistant.set_service_url(os.getenv("IBM_URL"))
+assistant.set_service_url(ibm_url)
+
+# Initialize with empty message to start the conversation.
+message_input = {
+    'message_type:': 'text',
+    'text': ''
+    }
+
 
 
 def write_prompt(day):
@@ -42,6 +53,7 @@ def is_first_monday(date, season_start):
 
 def generate_weekly_message(date):
     global event, today_str
+    context = {}
     today = datetime.date.today()
     # Define your season start dates
 
@@ -62,14 +74,14 @@ def generate_weekly_message(date):
     # Construct the prompt
     prompt = write_prompt(event)
 
-    # Generate text using Watsonx language model
+    # Send message to assistant.
     response = assistant.message_stateless(
-        assistant_id=assistant_id,
-        input={
-            'message_type': 'text',
-            'text': prompt
-        }
+        ibm_assistant_id,
+        input=prompt,
+        context=context
     ).get_result()
+
+    context = response['context']
 
     # Assuming a single response text for simplicity
     generated_text = response['output']['generic'][0]['text']
