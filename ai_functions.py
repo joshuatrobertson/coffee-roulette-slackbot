@@ -14,56 +14,7 @@ ibm_project_id = os.getenv("IBM_PROJECT_ID")
 ibm_access_token = os.getenv("IBM_ACCESS_TOKEN")
 
 
-url = "https://eu-de.ml.cloud.ibm.com/ml/v1/text/generation?version=2023-05-29"
 
-body = {
-	"input": """<|system|>
-You are Granite Chat, an AI language model developed by IBM. You are a cautious assistant. You carefully follow instructions. You are helpful and harmless and you follow ethical guidelines and promote positive behavior. You always respond to greetings (for example, hi, hello, g'\''day, morning, afternoon, evening, night, what'\''s up, nice to meet you, sup, etc) with \"Hello! I am Granite Chat, created by IBM. How can I help you today?\". Please do not say anything else and do not start a conversation.
-<|assistant|>
-""",
-	"parameters": {
-		"decoding_method": "greedy",
-		"max_new_tokens": 900,
-		"repetition_penalty": 1.05
-	},
-	"model_id": "ibm/granite-13b-chat-v2",
-	"project_id": "70e505ca-088c-44cb-ba57-bbccd5c8b6b7",
-	"moderations": {
-		"hap": {
-			"input": {
-				"enabled": true,
-				"threshold": 0.5,
-				"mask": {
-					"remove_entity_value": true
-				}
-			},
-			"output": {
-				"enabled": true,
-				"threshold": 0.5,
-				"mask": {
-					"remove_entity_value": true
-				}
-			}
-		}
-	}
-}
-
-headers = {
-	"Accept": "application/json",
-	"Content-Type": "application/json",
-	"Authorization": "Bearer " + ibm_access_token
-}
-
-response = requests.post(
-	url,
-	headers=headers,
-	json=body
-)
-
-if response.status_code != 200:
-	raise Exception("Non-200 response: " + str(response.text))
-
-data = response.json()
 
 
 def write_prompt(day):
@@ -103,6 +54,58 @@ def generate_weekly_message(date):
         today_str = today.strftime('%d-%m')
         event = special_days.get(today_str, '')
         print("Special day: " + event)
+
+        prompt = write_prompt(event)
+
+        url = "https://eu-de.ml.cloud.ibm.com/ml/v1/text/generation?version=2023-05-29"
+
+        body = {
+            "input": f"""<|system|>
+        {prompt}
+        """,
+            "parameters": {
+                "decoding_method": "greedy",
+                "max_new_tokens": 900,
+                "repetition_penalty": 1.05
+            },
+            "model_id": "ibm/granite-13b-chat-v2",
+            "project_id": "70e505ca-088c-44cb-ba57-bbccd5c8b6b7",
+            "moderations": {
+                "hap": {
+                    "input": {
+                        "enabled": true,
+                        "threshold": 0.5,
+                        "mask": {
+                            "remove_entity_value": true
+                        }
+                    },
+                    "output": {
+                        "enabled": true,
+                        "threshold": 0.5,
+                        "mask": {
+                            "remove_entity_value": true
+                        }
+                    }
+                }
+            }
+        }
+
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + ibm_access_token
+        }
+
+        response = requests.post(
+            url,
+            headers=headers,
+            json=body
+        )
+
+        if response.status_code != 200:
+            raise Exception("Non-200 response: " + str(response.text))
+
+        data = response.json()
 
     return data
 
