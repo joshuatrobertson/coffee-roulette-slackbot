@@ -1,29 +1,20 @@
 import datetime
-import os
-from dotenv import load_dotenv
-import requests
-
-# Load the .env file
-load_dotenv()
-
-ibm_api_key = os.getenv("IBM_API_KEY")
-
-ibm_access_token = os.getenv("IBM_ACCESS_TOKEN")
+import cohere
 
 event = ""
 
-
-
+# Initialize the Cohere client with your API key
+co = cohere.Client('uoQSq5wxhvw4bTa8hjLBWuQast6AqmeHWvONfdy3')
 
 
 def write_prompt(day):
     return ("Make a slack post for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday "
             "which means time for # cds-coffee-roulette!' It should include the period it falls on: " + day + " with "
-                                                                                                              "a short, one sentence question. There should be 3 short, complete answers (they should be numbered 1-3) (no "
-                                                                                                              "more than 5 words) that users can react to with an emoji which matches the sentence (use the slack format ':[emoji]:', include a"
-                                                                                                              "different with every answer."
-                                                                                                              "After the answers have a single closing sentence 'React with your preference, and we'll match you "
-                                                                                                              "for Coffee Roulette on Thursday!'")
+            "a short, one sentence question. There should be 3 short, complete answers (they should be numbered 1-3) (no "
+            "more than 5 words) that users can react to with an emoji which matches the sentence (use the slack format ':[emoji]:', include a"
+            "different with every answer."
+            "After the answers have a single closing sentence 'React with your preference, and we'll match you "
+            "for Coffee Roulette on Thursday!'")
 
 
 def is_first_monday(date, season_start):
@@ -53,59 +44,21 @@ def generate_weekly_message(date):
         event = special_days.get(today_str, '')
         print("Special day: " + event)
 
-        prompt = write_prompt(event)
+    # Construct the prompt
+    prompt = write_prompt(event)
 
-        url = "https://eu-de.ml.cloud.ibm.com/ml/v1/text/generation?version=2023-05-29"
+    # Generate text using Cohere's language model
+    response = co.generate(
+        model='command-r-plus',
+        prompt=prompt,
+        max_tokens=150,
+        temperature=0.2
+    )
 
-        body = {
-            "input": f"""<|system|>
-        {prompt}
-        """,
-            "parameters": {
-                "decoding_method": "greedy",
-                "max_new_tokens": 900,
-                "repetition_penalty": 1.05
-            },
-            "model_id": "ibm/granite-13b-chat-v2",
-            "project_id": "70e505ca-088c-44cb-ba57-bbccd5c8b6b7",
-            "moderations": {
-                "hap": {
-                    "input": {
-                        "enabled": True,
-                        "threshold": 0.5,
-                        "mask": {
-                            "remove_entity_value": True
-                        }
-                    },
-                    "output": {
-                        "enabled": True,
-                        "threshold": 0.5,
-                        "mask": {
-                            "remove_entity_value": True
-                        }
-                    }
-                }
-            }
-        }
+    # Extracting the generated text from the response
+    generated_text = response.generations[0].text
 
-        headers = {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + ibm_access_token
-        }
-
-        response = requests.post(
-            url,
-            headers=headers,
-            json=body
-        )
-
-        if response.status_code != 200:
-            raise Exception("Non-200 response: " + str(response.text))
-
-        data = response.json()
-
-    return data
+    return generated_text
 
 
 seasons = {
