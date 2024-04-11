@@ -74,17 +74,17 @@ def generate_weekly_message(date):
             "moderations": {
                 "hap": {
                     "input": {
-                        "enabled": true,
+                        "enabled": True,
                         "threshold": 0.5,
                         "mask": {
-                            "remove_entity_value": true
+                            "remove_entity_value": True
                         }
                     },
                     "output": {
-                        "enabled": true,
+                        "enabled": True,
                         "threshold": 0.5,
                         "mask": {
-                            "remove_entity_value": true
+                            "remove_entity_value": True
                         }
                     }
                 }
