@@ -5,10 +5,9 @@ import pytz
 
 app = Flask(__name__)
 
-
-# Define the route for Slack events
 @app.route("/slack/events", methods=["POST"])
 def slack_events():
+    print("Received event: ", request.data)
     return slack_app.dispatch(request)
 
 
@@ -49,11 +48,6 @@ def slack_commands():
 @app.route('/test', methods=['POST'])
 def test():
     return 'It works!', 200
-
-@app.route("/slack/events", methods=["POST"])
-def slack_events():
-    print("Received event: ", request.data)
-    return slack_app.dispatch(request)
 
 
 # Initialize the scheduler
