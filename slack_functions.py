@@ -78,6 +78,7 @@ def handle_reaction_added(event, say):
     # Store the user's reaction
     if reaction in user_responses:
         user_responses[reaction].append(user_id)
+        print("Reaction stored")
     else:
         user_responses[reaction] = [user_id]
 
