@@ -5,7 +5,7 @@ from ibm_watson import AssistantV2
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
 event = ""
-assistant_id = "19854e78-7ee5-403f-ba10-e3c8023bc9c6='19854e78-7ee5-403f-ba10-e3c8023bc9c6"
+assistant_id = "19854e78-7ee5-403f-ba10-e3c8023bc9c6"
 
 
 # Initialise Watson Assistant client
