@@ -76,6 +76,7 @@ def extract_emojis_from_message(message_content):
 @slack_app.event("reaction_added")
 def handle_reaction_added(event, say):
     current_ts = get_current_weekly_message_ts()  # Get the timestamp of the current weekly message
+    print("reaction stored!")
     reaction_msg_ts = event['item']['ts']
     if reaction_msg_ts == current_ts:
         user_id = event['user']
