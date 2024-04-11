@@ -89,7 +89,6 @@ def log_reaction(user_id, reaction):
     print(f"Logged reaction {reaction} from user {user_id}")
 
 def read_reactions():
-    """Read reactions from the file and return a dictionary of user IDs and their reactions."""
     reactions = {}
     try:
         with open("reactions.txt", "r") as file:
@@ -102,20 +101,6 @@ def read_reactions():
     except FileNotFoundError:
         print("No reactions file found.")
     return reactions
-
-
-# Function to pair users and notify them
-def pair_users():
-    reactions = read_reactions()
-    unique_users = list(set(reactions.keys()))
-    random.shuffle(unique_users)
-    pairs = []
-    while len(unique_users) > 1:
-        pairs.append((unique_users.pop(), unique_users.pop()))
-    if unique_users:
-        pairs[-1] += (unique_users.pop(),)
-    notify_users(pairs)
-    clear_reaction_logs()
 
 def notify_users(pairs):
     for pair in pairs:
@@ -184,3 +169,12 @@ def pair_users():
     # notify users of their pairs
     notify_users(pairs)
     clear_reaction_logs()  #  clear the file after pairing
+
+def message_pair(user1, user2):
+    slack_app.client.chat_postMessage(channel=user1, text=f"You've been paired with <@{user2}> for #cds-coffee-roulette! Please arrange a meeting.")
+    slack_app.client.chat_postMessage(channel=user2, text=f"You've been paired with <@{user1}> for #cds-coffee-roulette! Please arrange a meeting.")
+
+def message_trio(user1, user2, user3):
+    slack_app.client.chat_postMessage(channel=user1, text=f"You're in a trio with <@{user2}> and <@{user3}> for #cds-coffee-roulette! Please arrange a meeting.")
+    slack_app.client.chat_postMessage(channel=user2, text=f"You're in a trio with <@{user1}> and <@{user3}> for #cds-coffee-roulette! Please arrange a meeting.")
+    slack_app.client.chat_postMessage(channel=user3, text=f"You're in a trio with <@{user1}> and <@{user2}> for #cds-coffee-roulette! Please arrange a meeting.")
