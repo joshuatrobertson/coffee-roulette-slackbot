@@ -1,10 +1,7 @@
 import datetime
 import os
 from dotenv import load_dotenv
-from ibm_watsonx_ai import APIClient
-from ibm_watsonx_ai.foundation_models import Model
-from ibm_watsonx_ai.metanames import GenTextParamsMetaNames as GenParams
-from ibm_watsonx_ai.foundation_models.utils.enums import ModelTypes, DecodingMethods
+import requests
 
 # Load the .env file
 load_dotenv()
@@ -16,10 +13,6 @@ ibm_env_id = os.getenv("IBM_ENVIRONMENT_ID")
 ibm_project_id = os.getenv("IBM_PROJECT_ID")
 ibm_access_token = os.getenv("IBM_ACCESS_TOKEN")
 
-
-
-
-import requests
 
 url = "https://eu-de.ml.cloud.ibm.com/ml/v1/text/generation?version=2023-05-29"
 
