@@ -1,10 +1,10 @@
 import datetime
 import os
 from dotenv import load_dotenv
-from ibm_watsonx_ai import APIClient
-from ibm_watsonx_ai.foundation_models import Model
-from ibm_watsonx_ai.metanames import GenTextParamsMetaNames as GenParams
-from ibm_watsonx_ai.foundation_models.utils.enums import ModelTypes, DecodingMethods
+from ibm-watsonx-ai import APIClient
+from ibm-watsonx-ai.foundation_models import Model
+from ibm-watsonx-ai.metanames import GenTextParamsMetaNames as GenParams
+from ibm-watsonx-ai.foundation_models.utils.enums import ModelTypes, DecodingMethods
 
 # Load the .env file
 load_dotenv()
