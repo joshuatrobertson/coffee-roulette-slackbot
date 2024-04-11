@@ -35,7 +35,7 @@ def post_weekly_message():
     message_content = generate_message_for_week()
     print("Generated content: " + message_content)
 
-    note = ("\n\n---\n_This message was generated and posted by the CDSCoffeeRouletteBot :robot_face: using generative AI and therefore_ "
+    note = ("\n\n---\n\n_This message was generated and posted by the CDSCoffeeRouletteBot :robot_face: using generative AI and therefore_ "
             "_sometimes my output may be...interesting . For any issues or inquiries, please contact <@U06T3N4P2M8|josh>_ :josh-nyan-coffee: "
             "\n_Known bugs: none_ :smile:")
     message_content += note

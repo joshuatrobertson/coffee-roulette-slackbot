@@ -1,10 +1,18 @@
 import datetime
-import cohere
+import os
+
+from ibm_watson import AssistantV2
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
 event = ""
 
-# Initialize the Cohere client with your API key
-co = cohere.Client('uoQSq5wxhvw4bTa8hjLBWuQast6AqmeHWvONfdy3')
+# Initialise Watson Assistant client
+authenticator = IAMAuthenticator(os.getenv("IBM_API_KEY"))
+assistant = AssistantV2(
+    version='2022-04-07',
+    authenticator=authenticator
+)
+assistant.set_service_url(os.getenv("IBM_URL"))
 
 
 def write_prompt(day):
@@ -47,17 +55,19 @@ def generate_weekly_message(date):
     # Construct the prompt
     prompt = write_prompt(event)
 
-    # Generate text using Cohere's language model
-    response = co.generate(
-        model='command-r-plus',
-        prompt=prompt,
-        max_tokens=150,
-        temperature=0.2
-    )
+    assistant_id = 'your-assistant-id'
 
-    # Extracting the generated text from the response
-    generated_text = response.generations[0].text
+    # Generate text using Watsonx language model
+    response = assistant.message_stateless(
+        assistant_id=os.getenv("IBM_ASSISTANT_URL"),
+        input={
+            'message_type': 'text',
+            'text': prompt
+        }
+    ).get_result()
 
+    # Assuming a single response text for simplicity
+    generated_text = response['output']['generic'][0]['text']
     return generated_text
 
 
