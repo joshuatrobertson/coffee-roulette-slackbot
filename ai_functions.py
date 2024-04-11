@@ -1,7 +1,8 @@
 import datetime
 import os
 from dotenv import load_dotenv
-import watsonx_assistant_runtime as wasr
+from ibm_watson import AssistantV2
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
 # Load the .env file
 load_dotenv()
@@ -13,27 +14,27 @@ ibm_api_key = os.getenv("IBM_API_KEY")
 print("API KEY: " + ibm_api_key)
 ibm_url = os.getenv("IBM_URL")
 print("URL: " + ibm_url)
-
+ibm_env_id = os.getenv("IBM_ENVIRONMENT_ID")
+print("URL: " + ibm_env_id)
 
 # Initialise Watson Assistant client
-config = wasr.Config(
-    url=ibm_url,  # Replace with your actual assistant URL
-    username="josh.robertson@ibm.com",  # Replace with your Watsonx Assistant username
-    password="Itsamystery1999!"  # Replace with your Watsonx Assistant password
+authenticator = IAMAuthenticator(ibm_api_key)  # replace with API key
+assistant = AssistantV2(
+    version='2021-11-27',
+    authenticator=authenticator
 )
-assistant = wasr.WatsonxAssistantRuntime(config=config)
-
-# Initialize with empty message to start the conversation.
+assistant.set_service_url(ibm_url)  # replace with service instance URL
+assistant_id = ibm_env_id  # replace with environment ID
 
 
 def write_prompt(day):
     return ("Make a slack post for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday "
             "which means time for # cds-coffee-roulette!' It should include the period it falls on: " + day + " with "
-            "a short, one sentence question. There should be 3 short, complete answers (they should be numbered 1-3) (no "
-            "more than 5 words) that users can react to with an emoji which matches the sentence (use the slack format ':[emoji]:', include a"
-            "different with every answer."
-            "After the answers have a single closing sentence 'React with your preference, and we'll match you "
-            "for Coffee Roulette on Thursday!'")
+                                                                                                              "a short, one sentence question. There should be 3 short, complete answers (they should be numbered 1-3) (no "
+                                                                                                              "more than 5 words) that users can react to with an emoji which matches the sentence (use the slack format ':[emoji]:', include a"
+                                                                                                              "different with every answer."
+                                                                                                              "After the answers have a single closing sentence 'React with your preference, and we'll match you "
+                                                                                                              "for Coffee Roulette on Thursday!'")
 
 
 def is_first_monday(date, season_start):
@@ -64,17 +65,15 @@ def generate_weekly_message(date):
         event = special_days.get(today_str, '')
         print("Special day: " + event)
 
-    # Construct the prompt
     prompt = write_prompt(event)
 
-    # Send message to assistant.
-    response = assistant.get_response(prompt)
+    result = assistant.message_stateless(
+        assistant_id,
+        input=prompt
+    ).get_result()
+    print("Result: " + result.get('text'))
 
-    context = response['context']
-
-    # Assuming a single response text for simplicity
-    generated_text = response['output']['generic'][0]['text']
-    return response
+    return result.get('text')
 
 
 seasons = {

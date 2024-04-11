@@ -8,4 +8,5 @@ python-dotenv~=0.19.1
 apscheduler~=3.10.4
 pytz~=2024.1
 cohere
-watsonx_assistant_runtime
+ibm_cloud_sdk_core
+ibm_watson
