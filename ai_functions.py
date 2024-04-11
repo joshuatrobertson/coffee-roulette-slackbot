@@ -1,9 +1,7 @@
 import datetime
 import os
 from dotenv import load_dotenv
-
-from ibm_watson import AssistantV2
-from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+import watsonx_assistant_runtime as wasr
 
 # Load the .env file
 load_dotenv()
@@ -18,19 +16,14 @@ print("URL: " + ibm_url)
 
 
 # Initialise Watson Assistant client
-authenticator = IAMAuthenticator(ibm_api_key)
-assistant = AssistantV2(
-    version='2022-04-07',
-    authenticator=authenticator
+config = wasr.Config(
+    url=ibm_url,  # Replace with your actual assistant URL
+    username="josh.robertson@ibm.com",  # Replace with your Watsonx Assistant username
+    password="Itsamystery1999!"  # Replace with your Watsonx Assistant password
 )
-assistant.set_service_url(ibm_url)
+assistant = wasr.WatsonxAssistantRuntime(config=config)
 
 # Initialize with empty message to start the conversation.
-message_input = {
-    'message_type:': 'text',
-    'text': ''
-    }
-
 
 
 def write_prompt(day):
@@ -75,17 +68,13 @@ def generate_weekly_message(date):
     prompt = write_prompt(event)
 
     # Send message to assistant.
-    response = assistant.message_stateless(
-        ibm_assistant_id,
-        input=prompt,
-        context=context
-    ).get_result()
+    response = assistant.get_response(prompt)
 
     context = response['context']
 
     # Assuming a single response text for simplicity
     generated_text = response['output']['generic'][0]['text']
-    return generated_text
+    return response
 
 
 seasons = {
