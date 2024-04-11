@@ -1,30 +1,43 @@
 import datetime
 import os
 from dotenv import load_dotenv
-from ibm_watson import AssistantV2
-from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from ibm_watsonx_ai import APIClient
+from ibm_watsonx_ai.foundation_models import Model
+from ibm_watsonx_ai.metanames import GenTextParamsMetaNames as GenParams
+from ibm_watsonx_ai.foundation_models.utils.enums import ModelTypes, DecodingMethods
 
 # Load the .env file
 load_dotenv()
 
-event = ""
 ibm_assistant_id = os.getenv("IBM_ASSISTANT_ID")
-print("Assistant ID: " + ibm_assistant_id)
 ibm_api_key = os.getenv("IBM_API_KEY")
-print("API KEY: " + ibm_api_key)
 ibm_url = os.getenv("IBM_URL")
-print("URL: " + ibm_url)
 ibm_env_id = os.getenv("IBM_ENVIRONMENT_ID")
-print("URL: " + ibm_env_id)
+ibm_project_id = os.getenv("IBM_PROJECT_ID")
 
-# Initialise Watson Assistant client
-authenticator = IAMAuthenticator(ibm_api_key)  # replace with API key
-assistant = AssistantV2(
-    version='2021-11-27',
-    authenticator=authenticator
+wml_credentials = {
+    "url": "https://eu-de.ml.cloud.ibm.com",
+    "apikey": ibm_api_key
+}
+
+client = APIClient(wml_credentials)
+
+# To display example params enter
+GenParams().get_example_values()
+
+generate_params = {
+    GenParams.MAX_NEW_TOKENS: 25
+}
+
+model = Model(
+    model_id=ModelTypes.FLAN_UL2,
+    params=generate_params,
+    credentials={
+        "apikey": ibm_api_key,
+        "url": "https://eu-de.ml.cloud.ibm.com"
+    },
+    project_id=ibm_project_id
 )
-assistant.set_service_url(ibm_url)  # replace with service instance URL
-assistant_id = ibm_env_id  # replace with environment ID
 
 
 def write_prompt(day):
@@ -65,18 +78,11 @@ def generate_weekly_message(date):
         event = special_days.get(today_str, '')
         print("Special day: " + event)
 
-    prompt = write_prompt(event)
+    prompt_message = write_prompt(event)
+    generated_response = model.generate(prompt=prompt_message)
+    print(generated_response['results'][0]['generated_text'])
 
-    result = assistant.message_stateless(
-        assistant_id=assistant_id,
-        input={
-            'message_type': 'text',
-            'text': 'Hello'
-        }
-    ).get_result()
-    print("Result: " + result.get('text'))
-
-    return result.get('text')
+    return generated_response['results'][0]['generated_text']
 
 
 seasons = {

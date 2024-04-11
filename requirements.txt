@@ -10,3 +10,5 @@ pytz~=2024.1
 cohere
 ibm_cloud_sdk_core
 ibm_watson
+ibm_watson.assistant_v2
+ibm_watsonx_ai
