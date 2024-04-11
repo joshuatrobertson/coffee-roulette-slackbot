@@ -5,10 +5,23 @@ import pytz
 
 app = Flask(__name__)
 
+
 @app.route("/slack/events", methods=["POST"])
 def slack_events():
-    print("Received event: ", request.data)
-    return slack_app.dispatch(request)
+    # Parse the incoming JSON
+    data = request.get_json()
+
+    # Slack sends a challenge request when you add or modify the request URL
+    if 'challenge' in data:
+        return jsonify({
+            "challenge": data['challenge']
+        })
+
+    # Here, you can handle other events
+    # For example, if data contains event information, process it accordingly
+    print("Received event:", data)
+
+    return "OK", 200
 
 
 @app.route('/')
