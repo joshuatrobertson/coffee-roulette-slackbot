@@ -68,8 +68,11 @@ def generate_weekly_message(date):
     prompt = write_prompt(event)
 
     result = assistant.message_stateless(
-        assistant_id,
-        input=prompt
+        assistant_id=assistant_id,
+        input={
+            'message_type': 'text',
+            'text': 'Hello'
+        }
     ).get_result()
     print("Result: " + result.get('text'))
 
