@@ -5,6 +5,8 @@ from ibm_watson import AssistantV2
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
 event = ""
+assistant_id = "19854e78-7ee5-403f-ba10-e3c8023bc9c6='19854e78-7ee5-403f-ba10-e3c8023bc9c6"
+
 
 # Initialise Watson Assistant client
 authenticator = IAMAuthenticator(os.getenv("IBM_API_KEY"))
@@ -55,11 +57,9 @@ def generate_weekly_message(date):
     # Construct the prompt
     prompt = write_prompt(event)
 
-    assistant_id = 'your-assistant-id'
-
     # Generate text using Watsonx language model
     response = assistant.message_stateless(
-        assistant_id=os.getenv("IBM_ASSISTANT_URL"),
+        assistant_id=assistant_id,
         input={
             'message_type': 'text',
             'text': prompt

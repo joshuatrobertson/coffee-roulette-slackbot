@@ -1,13 +1,11 @@
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
+# Attempt to fetch the IBM API Key from environment variables
+ibm_api_key = os.getenv("IBM_ASSISTANT_ID")
 
+# Debugging: Log the value of IBM_API_KEY
+print("IBM API Key:", ibm_api_key)
 
-# Access environment variables
-slack_bot_token = os.getenv("SLACK_BOT_TOKEN")
-slack_signing_secret = os.getenv("SLACK_SIGNING_SECRET")
-
-# Print the values
-print("Slack Bot Token:", slack_bot_token)
-print("Slack Signing Secret:", slack_signing_secret)
+# Ensure the IBM API Key is present before proceeding
+if not ibm_api_key:
+    raise ValueError("The IBM_API_KEY environment variable is missing or not set.")
