@@ -116,6 +116,7 @@ def pair_users():
                 message_user2 = return_user_message_pair(user1)
                 slack_app.client.chat_postMessage(channel=user1, text=message_user1)
                 slack_app.client.chat_postMessage(channel=user2, text=message_user2)
+                print(f"Pairing user: {user1} with {user2} ")
             except Exception as e:
                 print(f"Error sending message to one of the users in the pair {pair}: {e}")
         else:  # Handling a trio
@@ -127,6 +128,7 @@ def pair_users():
                 slack_app.client.chat_postMessage(channel=user1, text=message_user1)
                 slack_app.client.chat_postMessage(channel=user2, text=message_user2)
                 slack_app.client.chat_postMessage(channel=user3, text=message_user3)
+                print(f"Pairing user: {user1} with {user2} with {user3}")
             except Exception as e:
                 print(f"Error sending message to one of the users in the trio {pair}: {e}")
 
