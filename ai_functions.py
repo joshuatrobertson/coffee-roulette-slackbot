@@ -13,6 +13,8 @@ ibm_env_id = os.getenv("IBM_ENVIRONMENT_ID")
 ibm_project_id = os.getenv("IBM_PROJECT_ID")
 ibm_access_token = os.getenv("IBM_ACCESS_TOKEN")
 
+event = ""
+
 
 
 
@@ -37,7 +39,6 @@ def is_first_monday(date, season_start):
 
 def generate_weekly_message(date):
     global event, today_str
-    context = {}
     today = datetime.date.today()
     # Define your season start dates
 
