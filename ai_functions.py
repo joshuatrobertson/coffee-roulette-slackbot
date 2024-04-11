@@ -6,11 +6,8 @@ import requests
 # Load the .env file
 load_dotenv()
 
-ibm_assistant_id = os.getenv("IBM_ASSISTANT_ID")
 ibm_api_key = os.getenv("IBM_API_KEY")
-ibm_url = os.getenv("IBM_URL")
-ibm_env_id = os.getenv("IBM_ENVIRONMENT_ID")
-ibm_project_id = os.getenv("IBM_PROJECT_ID")
+
 ibm_access_token = os.getenv("IBM_ACCESS_TOKEN")
 
 event = ""
