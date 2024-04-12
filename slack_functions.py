@@ -8,6 +8,7 @@ from ai_functions import generate_weekly_message
 import tempfile
 
 channel_id = "C06T4HJ4Y5Q"
+bot_added_emojis = []
 
 # Load environment variables from .env file
 load_dotenv()
@@ -89,7 +90,7 @@ def extract_emojis_from_message(message_content):
     return emojis_list
 
 
-# handles the reaction_added event
+# handles the reaction_added event - adds all emojis, so if a user reacts in any way to the post they will be matched
 @slack_app.event("reaction_added")
 def handle_reaction_added(event):
     current_ts = get_current_weekly_message_ts()  # Get the timestamp of the current weekly message
