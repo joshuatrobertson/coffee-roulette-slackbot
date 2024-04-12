@@ -88,6 +88,7 @@ def handle_reaction_added(event):
     print(f"Timestamp of weekly message after fetching is " + current_ts) # Get the timestamp of the current weekly message
     print("reaction stored!")
     reaction_msg_ts = event['item']['ts']
+    print("Timestamp of reaction: " + reaction_msg_ts)
     if reaction_msg_ts == current_ts:
         user_id = event['user']
         reaction = event['reaction']
