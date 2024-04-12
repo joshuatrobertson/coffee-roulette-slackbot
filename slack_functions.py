@@ -52,7 +52,7 @@ def post_weekly_message(retry_count=0, max_retries=3):
         print("Generated content: " + message_content)
     else:
         message_content = generate_message_for_week_third_try()
-        print("Generated content: " + message_content)
+        print("Generated content for retry: " + message_content)
 
     note = ("\n\n\n-------+-------\n\n\n_This message was generated and posted by the CDSCoffeeRouletteBot :robot_face: using "
             "generative AI and therefore sometimes my output may be...interesting. For any issues, please"
