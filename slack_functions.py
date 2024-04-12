@@ -88,16 +88,20 @@ def handle_reaction_added(event):
     print(f"Timestamp of weekly message after fetching is {current_ts}")
     print("reaction stored!")
 
-    # Check if 'item' and 'ts' are present in the event dictionary
-    if 'item' in event and 'ts' in event['item']:
-        reaction_msg_ts = event['item']['ts']
+    try:
+        # Attempt to extract timestamp from event['item']
+        reaction_msg_ts = event['event']['item']['ts']
         print("Timestamp of reaction: " + reaction_msg_ts)
+
         if reaction_msg_ts == current_ts:
-            user_id = event['user']
-            reaction = event['reaction']
+            user_id = event['event']['user']
+            reaction = event['event']['reaction']
             log_reaction(user_id, reaction)
-    else:
-        print("Event does not contain 'item' or 'ts'.")
+
+    except KeyError as e:
+        # Log the exception and the event that caused it
+        print(f"KeyError encountered: {str(e)}")
+        print(f"Received event: {event}")
 
 
 def notify_users(pairs):
