@@ -10,11 +10,12 @@ co = cohere.Client('uoQSq5wxhvw4bTa8hjLBWuQast6AqmeHWvONfdy3')
 def write_prompt(day):
     return ("Make a slack post for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday "
             "which means time for # cds-coffee-roulette!' It should include the period it falls on: " + day + " with "
-            "a short, one sentence question. There should be 3 short, complete answers (they should be numbered 1-3) (no "
-            "more than 5 words) that users can react to with an emoji which matches the sentence (use the slack format ':[emoji]:', include a"
-            "different emoji with every answer so there should be 3 different emojis in the post that are found in the standard slack library."
-            "After the answers have a single closing sentence 'React with your preference, and we'll match you "
-            "for Coffee Roulette on Thursday!'")
+                                                                                                              "a short, one sentence question. There should be 3 short, complete answers (they should be numbered 1-3) (no "
+                                                                                                              "more than 5 words) that users can react to with an emoji which matches the sentence (use the slack format ':[emoji]:', include a"
+                                                                                                              "different emoji with every answer so there should be 3 different emojis in the post that are found in the standard slack library."
+                                                                                                              "After the answers have a single closing sentence 'React with your preference, and we'll match you "
+                                                                                                              "for Coffee Roulette on Thursday!'")
+
 
 # used in cases where the retry count is > 2 where no different emojis can be found
 def write_prompt_retry(day):
@@ -24,6 +25,8 @@ def write_prompt_retry(day):
             "more than 5 words) that users can react to with a numbered emoji 1 to 3 (use the slack format :emoji:. The emojis should be :one:, :two: and :three:"
             "After the answers have a single closing sentence 'React with your preference, and we'll match you "
             "for Coffee Roulette on Thursday!'")
+
+
 def is_first_monday(date, season_start):
     # Check if the date is the first Monday after the season start.
     if date.month == season_start.month and date.day >= season_start.day:
@@ -32,7 +35,7 @@ def is_first_monday(date, season_start):
     return False
 
 
-def generate_weekly_message(date):
+def generate_weekly_message(date, retry):
     global event, today_str
     today = datetime.date.today()
     # Define your season start dates
@@ -42,7 +45,10 @@ def generate_weekly_message(date):
         season_start = datetime.date(today.year, month, day)
         if today == season_start or is_first_monday(today, season_start):
             print("Season: " + season_name)
-            event = (write_prompt(season_name))
+            if retry:
+                event = (write_prompt_retry(season_name))
+            else:
+                event = (write_prompt(season_name))
         break
 
     # Special Day check if not a season event
@@ -52,7 +58,10 @@ def generate_weekly_message(date):
         print("Special day: " + event)
 
     # Construct the prompt
-    prompt = write_prompt(event)
+    if retry:
+        prompt = (write_prompt_retry(event))
+    else:
+        prompt = (write_prompt(event))
 
     # Generate text using Cohere's language model
     response = co.generate(
