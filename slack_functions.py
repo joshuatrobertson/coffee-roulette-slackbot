@@ -5,7 +5,8 @@ from dotenv import load_dotenv
 from slack_bolt import App
 import re
 from ai_functions import generate_weekly_message
-from file_operations import log_reaction, read_reactions, clear_reaction_logs, store_message_ts, get_current_weekly_message_ts
+from file_operations import log_reaction, read_reactions, clear_reaction_logs, store_message_ts, \
+    get_current_weekly_message_ts
 import tempfile
 
 channel_id = "C06T4HJ4Y5Q"
@@ -82,7 +83,8 @@ def extract_emojis_from_message(message_content):
 # handles the reaction_added event - adds all emojis, so if a user reacts in any way to the post they will be matched
 @slack_app.event("reaction_added")
 def handle_reaction_added(event):
-    current_ts = get_current_weekly_message_ts()  # Get the timestamp of the current weekly message
+    current_ts = get_current_weekly_message_ts()
+    print(f"Timestamp of weekly message after fetching is {current_ts}") # Get the timestamp of the current weekly message
     print("reaction stored!")
     reaction_msg_ts = event['item']['ts']
     if reaction_msg_ts == current_ts:
@@ -93,46 +95,47 @@ def handle_reaction_added(event):
 
 def notify_users(pairs):
     for pair in pairs:
-        if len(pair) == 2:
-            message_pair(pair[0], pair[1])
-        elif len(pair) == 3:
-            message_trio(pair[0], pair[1], pair[2])
+        message_users(*pair)
 
 
 def pair_users():
-    reactions = read_reactions()
-    unique_users = set(reactions.keys())  # Unique users based on their reactions
+    reactions = read_reactions()  # Expected to return a dict like {'U123': 'emoji_one', 'U456': 'emoji_two', ...}
+    grouped_users = {}  # Dict to hold users grouped by emoji
 
-    # Logic to randomly shuffle and pair users
-    unique_users_list = list(unique_users)
-    random.shuffle(unique_users_list)
+    # Group users by their reactions
+    for user, emoji in reactions.items():
+        if emoji not in grouped_users:
+            grouped_users[emoji] = []
+        grouped_users[emoji].append(user)
+
+    # Create pairs within each emoji group
     pairs = []
+    for users in grouped_users.values():
+        random.shuffle(users)  # Shuffle users within the same emoji group
+        while len(users) >= 2:
+            pairs.append((users.pop(), users.pop()))
 
-    while len(unique_users_list) >= 2:
-        pairs.append((unique_users_list.pop(), unique_users_list.pop()))
+        # If an odd number of users, optionally add the last one to the last created pair
+        if users and pairs:
+            pairs[-1] += (users.pop(),)
 
-    # If an odd number of users, handle the last user
-    if unique_users_list:
-        # Could append to the last pair or create a special case for this user
-        if pairs:
-            pairs[-1] += (unique_users_list.pop(),)
-
-    # notify users of their pairs
+    # Notify users of their pairs or trios
     notify_users(pairs)
-    clear_reaction_logs()  # clear the file after pairing
+    clear_reaction_logs()  # Clear the file after pairing
 
 
-def message_pair(user1, user2):
-    slack_app.client.chat_postMessage(channel=user1,
-                                      text=f"You've been paired with <@{user2}> for #cds-coffee-roulette! Please arrange a meeting.")
-    slack_app.client.chat_postMessage(channel=user2,
-                                      text=f"You've been paired with <@{user1}> for #cds-coffee-roulette! Please arrange a meeting.")
+# Message either 2 or 3 users
+def message_users(*users):
+    if len(users) < 2:
+        raise ValueError("At least two users are required to send a message.")
 
-
-def message_trio(user1, user2, user3):
-    slack_app.client.chat_postMessage(channel=user1,
-                                      text=f"You're in a trio with <@{user2}> and <@{user3}> for #cds-coffee-roulette! Please arrange a meeting.")
-    slack_app.client.chat_postMessage(channel=user2,
-                                      text=f"You're in a trio with <@{user1}> and <@{user3}> for #cds-coffee-roulette! Please arrange a meeting.")
-    slack_app.client.chat_postMessage(channel=user3,
-                                      text=f"You're in a trio with <@{user1}> and <@{user2}> for #cds-coffee-roulette! Please arrange a meeting.")
+    # Generate the message for each user by mentioning all other users
+    for i in range(len(users)):
+        # Create a list of all users except the current one being messaged
+        other_users = [f"<@{user}>" for j, user in enumerate(users) if i != j]
+        if len(other_users) > 1: # other users is greater than 1 i.e. a trio
+            message_text = f"You've been paired with {', '.join(other_users[:-1])} and {other_users[-1]} for #cds-coffee-roulette! Please arrange a meeting."
+        else:
+            message_text = f"You've been paired with {other_users[0]} for #cds-coffee-roulette! Please arrange a meeting." # pair as only one other user
+        # Send the message to the current user
+        slack_app.client.chat_postMessage(channel=users[i], text=message_text)

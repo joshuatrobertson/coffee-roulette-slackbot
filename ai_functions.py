@@ -252,7 +252,7 @@ special_days = {
     '03-07': "Stay Out of the Sun Day",
     '04-07': "Independence Day (USA)",
     '05-07': "Bikini Day",
-    '06-07': "International Kissing Day",
+    '06-07': "International Kissing Day", #TODO: remove
     '07-07': "World Chocolate Day",
     '08-07': "Video Games Day",
     '09-07': "Sugar Cookie Day",

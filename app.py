@@ -69,7 +69,7 @@ scheduler = BackgroundScheduler(timezone=pytz.timezone('Europe/London'))
 scheduler.start()
 
 # Schedule the post_weekly_message function to run every Monday at 9:00 AM
-# scheduler.add_job(post_weekly_message, 'cron', day_of_week='mon', hour=6, minute=15) TODO: implement when live
+# scheduler.add_job(post_weekly_message, 'cron', day_of_week='mon', hour=9, minute=15) TODO: implement when live
 
 
 # Schedule the pair_users function to run every Wednesday at 1:00 PM
