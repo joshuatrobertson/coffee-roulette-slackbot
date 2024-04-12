@@ -52,6 +52,7 @@ def store_message_ts(timestamp):
 def get_current_weekly_message_ts():
     try:
         with open("timestamp_of_last_post.txt", "r") as file:
+            print(f"Found timestamp from file: {file.read().strip()}")
             return file.read().strip()
     except FileNotFoundError:
         print("Timestamp file not found. Ensure the message is posted first.")
