@@ -16,7 +16,15 @@ def write_prompt(day):
             "After the answers have a single closing sentence 'React with your preference, and we'll match you "
             "for Coffee Roulette on Thursday!'")
 
-
+# used in cases where the retry count is > 2 where no different emojis can be found
+def write_prompt_retry(day):
+    return ("Make a slack post for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday "
+            "which means time for # cds-coffee-roulette!' It should include the period it falls on: " + day + " with "
+            "a short, one sentence question. There should be 3 short, complete answers (they should be numbered 1-3) (no "
+            "more than 5 words) that users can react to with a numbered emoji 1 to 3 (use the slack format :one: :two: :three: , include a"
+            "different emoji with every answer so there should be 3 different emojis in the post that are found in the standard slack library."
+            "After the answers have a single closing sentence 'React with your preference, and we'll match you "
+            "for Coffee Roulette on Thursday!'")
 def is_first_monday(date, season_start):
     # Check if the date is the first Monday after the season start.
     if date.month == season_start.month and date.day >= season_start.day:

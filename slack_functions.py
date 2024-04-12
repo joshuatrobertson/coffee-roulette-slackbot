@@ -32,14 +32,26 @@ def generate_message_for_week():
     return message_content
 
 
+# generate weekly message using numbered emojis if it's failed
+def generate_message_for_week_third_try():
+    today = datetime.date.today().strftime('%d-%m')
+    # Customize this message as needed
+    message_content = generate_message_for_week_third_try(today)
+    print("Message content in generate_weekly_message: " + message_content)
+    return message_content
+
+
 # Function to post the weekly message
 def post_weekly_message(retry_count=0, max_retries=3):
     if retry_count >= max_retries:
         print(f"Failed to post message after {max_retries} attempts. Emoji addition failed.")
         return  # Exit the function if max retries are reached
 
-    message_content = generate_message_for_week()
-    print("Generated content: " + message_content)
+    if retry_count < 3:
+        message_content = generate_message_for_week()
+        print("Generated content: " + message_content)
+    else:
+        message_content = generate_message_for_week_third_try()
 
     note = ("\n\n---\n\n_This message was generated and posted by the CDSCoffeeRouletteBot :robot_face: using "
             "generative AI and therefore sometimes my output may be...interesting. For any issues or inquiries, please"
@@ -80,8 +92,6 @@ def post_weekly_message(retry_count=0, max_retries=3):
             print(f"Failed to delete message: {e}")
 
         post_weekly_message(retry_count + 1, max_retries)  # Retry posting the message
-
-
 
 
 def extract_emojis_from_message(message_content):
