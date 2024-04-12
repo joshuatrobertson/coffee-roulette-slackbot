@@ -115,9 +115,10 @@ def pair_users():
 
     # Group users by their reactions
     for user, emoji in reactions.items():
-        if emoji not in grouped_users:
-            grouped_users[emoji] = []
-        grouped_users[emoji].append(user)
+        emoji_tuple = tuple(emoji)  # Convert list to tuple
+        if emoji_tuple not in grouped_users:
+            grouped_users[emoji_tuple] = []
+        grouped_users[emoji_tuple].append(user)
 
     # Create pairs within each emoji group
     pairs = []
