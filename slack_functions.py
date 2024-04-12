@@ -47,14 +47,15 @@ def post_weekly_message(retry_count=0, max_retries=3):
         print(f"Failed to post message after {max_retries} attempts. Emoji addition failed.")
         return  # Exit the function if max retries are reached
 
-    if retry_count < 3:
+    if retry_count < 2:
         message_content = generate_message_for_week()
         print("Generated content: " + message_content)
     else:
         message_content = generate_message_for_week_third_try()
+        print("Generated content: " + message_content)
 
-    note = ("\n\n---\n\n_This message was generated and posted by the CDSCoffeeRouletteBot :robot_face: using "
-            "generative AI and therefore sometimes my output may be...interesting. For any issues or inquiries, please"
+    note = ("\n\n\n-------+-------\n\n\n_This message was generated and posted by the CDSCoffeeRouletteBot :robot_face: using "
+            "generative AI and therefore sometimes my output may be...interesting. For any issues, please"
             " contact <@U06T3N4P2M8|josh>_ :josh-nyan-coffee:\n_Known bugs: none_ :smile:")
     message_content += note
 
