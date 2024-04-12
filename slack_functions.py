@@ -43,7 +43,7 @@ def post_weekly_message():
 
     response = slack_app.client.chat_postMessage(channel=channel_id, text=message_content)
     message_ts = response['ts']  # Capture the timestamp of the posted message
-    store_message_ts(message_ts) # store it
+    store_message_ts(message_ts)  # store it
     print("Timestamp of posted message: " + message_ts)
     emojis = extract_emojis_from_message(message_content)
     print("Extracted Emojis:", emojis)
@@ -74,7 +74,7 @@ def extract_emojis_from_message(message_content):
 
 # handles the reaction_added event
 @slack_app.event("reaction_added")
-def handle_reaction_added(event, say):
+def handle_reaction_added(event):
     current_ts = get_current_weekly_message_ts()  # Get the timestamp of the current weekly message
     print("reaction stored!")
     reaction_msg_ts = event['item']['ts']
@@ -83,11 +83,13 @@ def handle_reaction_added(event, say):
         reaction = event['reaction']
         log_reaction(user_id, reaction)
 
+
 def log_reaction(user_id, reaction):
     # log the user's reaction to a file
     with open("reactions.txt", "a") as file:
         file.write(f"{user_id},{reaction}\n")
     print(f"Logged reaction {reaction} from user {user_id}")
+
 
 def read_reactions():
     reactions = {}
@@ -103,6 +105,7 @@ def read_reactions():
         print("No reactions file found.")
     return reactions
 
+
 def notify_users(pairs):
     for pair in pairs:
         if len(pair) == 2:
@@ -110,14 +113,18 @@ def notify_users(pairs):
         elif len(pair) == 3:
             message_trio(pair[0], pair[1], pair[2])
 
+
 def return_user_message_trio(user1, user2):
     return f"You've been paired with <@{user1}> and <@{user2}> for #cds-coffee-roulette! Please arrange a meeting."
+
 
 def return_user_message_pair(user1):
     return f"You've been paired with <@{user1}> for #cds-coffee-roulette! Please arrange a meeting."
 
+
 def clear_reaction_logs():
     open("reactions.txt", "w").close()
+
 
 # store the timestamp in timestamp_of_last_post.txt
 def store_message_ts(timestamp):
@@ -136,6 +143,7 @@ def store_message_ts(timestamp):
         if temp_file_path and os.path.exists(temp_file_path):
             os.unlink(temp_file_path)
 
+
 # get the weekly timestamp from the last post
 def get_current_weekly_message_ts():
     try:
@@ -148,8 +156,8 @@ def get_current_weekly_message_ts():
         print(f"Error reading timestamp file: {e}")
         return None
 
+
 def pair_users():
-    """Pairs users based on logged reactions."""
     reactions = read_reactions()
     unique_users = set(reactions.keys())  # Unique users based on their reactions
 
@@ -169,13 +177,20 @@ def pair_users():
 
     # notify users of their pairs
     notify_users(pairs)
-    clear_reaction_logs()  #  clear the file after pairing
+    clear_reaction_logs()  # clear the file after pairing
+
 
 def message_pair(user1, user2):
-    slack_app.client.chat_postMessage(channel=user1, text=f"You've been paired with <@{user2}> for #cds-coffee-roulette! Please arrange a meeting.")
-    slack_app.client.chat_postMessage(channel=user2, text=f"You've been paired with <@{user1}> for #cds-coffee-roulette! Please arrange a meeting.")
+    slack_app.client.chat_postMessage(channel=user1,
+                                      text=f"You've been paired with <@{user2}> for #cds-coffee-roulette! Please arrange a meeting.")
+    slack_app.client.chat_postMessage(channel=user2,
+                                      text=f"You've been paired with <@{user1}> for #cds-coffee-roulette! Please arrange a meeting.")
+
 
 def message_trio(user1, user2, user3):
-    slack_app.client.chat_postMessage(channel=user1, text=f"You're in a trio with <@{user2}> and <@{user3}> for #cds-coffee-roulette! Please arrange a meeting.")
-    slack_app.client.chat_postMessage(channel=user2, text=f"You're in a trio with <@{user1}> and <@{user3}> for #cds-coffee-roulette! Please arrange a meeting.")
-    slack_app.client.chat_postMessage(channel=user3, text=f"You're in a trio with <@{user1}> and <@{user2}> for #cds-coffee-roulette! Please arrange a meeting.")
+    slack_app.client.chat_postMessage(channel=user1,
+                                      text=f"You're in a trio with <@{user2}> and <@{user3}> for #cds-coffee-roulette! Please arrange a meeting.")
+    slack_app.client.chat_postMessage(channel=user2,
+                                      text=f"You're in a trio with <@{user1}> and <@{user3}> for #cds-coffee-roulette! Please arrange a meeting.")
+    slack_app.client.chat_postMessage(channel=user3,
+                                      text=f"You're in a trio with <@{user1}> and <@{user2}> for #cds-coffee-roulette! Please arrange a meeting.")

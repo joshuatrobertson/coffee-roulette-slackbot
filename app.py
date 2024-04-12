@@ -1,7 +1,7 @@
-from flask import Flask, request, jsonify
-from slack_functions import slack_app, post_weekly_message, pair_users, get_current_weekly_message_ts, store_message_ts, handle_reaction_event
-from apscheduler.schedulers.background import BackgroundScheduler
 import pytz
+from apscheduler.schedulers.background import BackgroundScheduler
+from flask import Flask, request, jsonify
+from slack_functions import post_weekly_message, pair_users, handle_reaction_added
 
 app = Flask(__name__)
 
@@ -21,7 +21,7 @@ def slack_events():
 
     # Check if it's a reaction event and call the appropriate function
     if data["event"]["type"] == "reaction_added":
-        handle_reaction_event(data)  # Call handle_reaction_event from slack_functions.py
+        handle_reaction_added(data)  # Call handle_reaction_event from slack_functions.py
     return "OK", 200
 
 
