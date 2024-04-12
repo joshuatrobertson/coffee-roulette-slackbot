@@ -43,6 +43,7 @@ def post_weekly_message(retry_count=0, max_retries=3):
     message_content = generate_message_for_week(use_numbered_emojis)
     print("Generated content: " + message_content)
 
+    # Try to fetch the emojis
     emojis = extract_emojis_from_message(message_content)
     print("Extracted Emojis:", emojis)
     if len(emojis) != 3:
@@ -73,7 +74,7 @@ def post_weekly_message(retry_count=0, max_retries=3):
 
 # use a regex to match both "1. :emoji:" and "1: :emoji:"
 def extract_emojis_from_message(message_content):
-    emoji_pattern = r'\d[:.]\s*:(\w+):'
+    emoji_pattern = r'^\d[.:].*:(\w+):'
     emojis_list = re.findall(emoji_pattern, message_content, flags=re.MULTILINE)
     return emojis_list
 
