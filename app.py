@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from slack_functions import slack_app, post_weekly_message, pair_users, get_current_weekly_message_ts, store_message_ts
+from slack_functions import slack_app, post_weekly_message, pair_users, get_current_weekly_message_ts, store_message_ts, handle_reaction_event
 from apscheduler.schedulers.background import BackgroundScheduler
 import pytz
 
@@ -13,14 +13,15 @@ def slack_events():
 
     # Slack sends a challenge request when you add or modify the request URL
     if 'challenge' in data:
-        return jsonify({
-            "challenge": data['challenge']
-        })
+        return jsonify({"challenge": data['challenge']})
 
     # Here, you can handle other events
     # For example, if data contains event information, process it accordingly
     print("Received event:", data)
 
+    # Check if it's a reaction event and call the appropriate function
+    if data["event"]["type"] == "reaction_added":
+        handle_reaction_event(data)  # Call handle_reaction_event from slack_functions.py
     return "OK", 200
 
 
