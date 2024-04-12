@@ -37,54 +37,38 @@ def generate_message_for_week(use_numbered_emojis=False):
 def post_weekly_message(retry_count=0, max_retries=3):
     if retry_count >= max_retries:
         print(f"Failed to post message after {max_retries} attempts. Emoji addition failed.")
-        return  # Exit the function if max retries are reached
-    print(f"Retry count: {retry_count}")
-    if retry_count < 2:
-        message_content = generate_message_for_week()
-        print("Generated content: " + message_content)
-    else:
-        message_content = generate_message_for_week(use_numbered_emojis=True)
-        print("Generated content for retry: " + message_content)
-
-    note = ("\n\n\n-------+-------\n\n\n_This message was generated and posted by the CDSCoffeeRouletteBot "
-            ":robot_face: using generative AI and therefore sometimes my output may be...interesting. For any "
-            "issues, please contact <@U06T3N4P2M8|josh>_ :josh-nyan-coffee:\n_Known bugs: none_ :smile:")
-    message_content += note
-
-    response = slack_app.client.chat_postMessage(channel=channel_id, text=message_content)
-    message_ts = response['ts']  # Capture the timestamp of the posted message
-    store_message_ts(message_ts)  # store it
-    print("Timestamp of posted message: " + message_ts)
-    emojis = extract_emojis_from_message(message_content)
-    print("Extracted Emojis:", emojis)
-
-    if len(emojis) != 3:
-        print("Error: Number of extracted emojis is not 3. Retrying...")
-        post_weekly_message(retry_count + 1, max_retries)  # Increment the retry count and retry
         return
 
-    failed_to_add_emoji = False
+    use_numbered_emojis = retry_count == 2  # Use numbered emojis only on the third attempt
+    message_content = generate_message_for_week(use_numbered_emojis)
+    print("Generated content: " + message_content)
+
+    emojis = extract_emojis_from_message(message_content)
+    print("Extracted Emojis:", emojis)
+    if len(emojis) != 3:
+        print("Error: Number of extracted emojis is not 3. Retrying...")
+        post_weekly_message(retry_count + 1, max_retries)
+        return
+
+    # Append the note only after confirming emoji count
+    message_content += ("\n\n\n-------+-------\n\n\n_This message was generated and posted by the CDSCoffeeRouletteBot "
+                        ":robot_face: using generative AI and therefore sometimes my output may be...interesting. For any "
+                        "issues or bugs, please contact <@U06T3N4P2M8|josh>_ :josh-nyan-coffee:\n_Known bugs: none_ :smile:")
+
+    message_ts = slack_app.client.chat_postMessage(channel=channel_id, text=message_content)['ts']
+    store_message_ts(message_ts)
+    print("Timestamp of posted message: " + message_ts)
+
     for emoji in emojis:
         try:
             print("Adding Emoji", emoji)
-            slack_app.client.reactions_add(
-                channel=channel_id,
-                name=emoji,
-                timestamp=message_ts
-            )
+            slack_app.client.reactions_add(channel=channel_id, name=emoji, timestamp=message_ts)
         except Exception as e:
             print(f"Error adding reaction {emoji}: {e}")
-            failed_to_add_emoji = True
-            break  # Break out of the loop since we need to retry the entire process
-
-    if failed_to_add_emoji:
-        try:
-            slack_app.client.chat_delete(channel=channel_id, ts=message_ts)  # Attempt to delete the posted message
+            slack_app.client.chat_delete(channel=channel_id, ts=message_ts)
             print("Deleted message due to emoji addition failure.")
-        except Exception as e:
-            print(f"Failed to delete message: {e}")
-
-        post_weekly_message(retry_count + 1, max_retries)  # Retry posting the message
+            post_weekly_message(retry_count + 1, max_retries)  # Optionally retry
+            return
 
 
 # use a regex to match both "1. :emoji:" and "1: :emoji:"
