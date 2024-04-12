@@ -46,7 +46,7 @@ def post_weekly_message(retry_count=0, max_retries=3):
     if retry_count >= max_retries:
         print(f"Failed to post message after {max_retries} attempts. Emoji addition failed.")
         return  # Exit the function if max retries are reached
-
+    print(f"Retry count: {retry_count}")
     if retry_count < 2:
         message_content = generate_message_for_week()
         print("Generated content: " + message_content)
