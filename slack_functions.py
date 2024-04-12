@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from slack_bolt import App
 import re
 from ai_functions import generate_weekly_message
+from file_operations import log_reaction, read_reactions, clear_reaction_logs, store_message_ts, get_current_weekly_message_ts
 import tempfile
 
 channel_id = "C06T4HJ4Y5Q"
@@ -24,19 +25,10 @@ user_responses = {}
 
 
 # Function to generate the weekly message
-def generate_message_for_week():
+def generate_message_for_week(use_numbered_emojis=False):
     today = datetime.date.today().strftime('%d-%m')
     # Customize this message as needed
-    message_content = generate_weekly_message(today, False)
-    print("Message content in generate_weekly_message: " + message_content)
-    return message_content
-
-
-# generate weekly message using numbered emojis if it's failed
-def generate_message_for_week_third_try():
-    today = datetime.date.today().strftime('%d-%m')
-    # Customize this message as needed
-    message_content = generate_weekly_message(today, True)
+    message_content = generate_weekly_message(today, use_numbered_emojis)
     print("Message content in generate_weekly_message: " + message_content)
     return message_content
 
@@ -51,7 +43,7 @@ def post_weekly_message(retry_count=0, max_retries=3):
         message_content = generate_message_for_week()
         print("Generated content: " + message_content)
     else:
-        message_content = generate_message_for_week_third_try()
+        message_content = generate_message_for_week(use_numbered_emojis=True)
         print("Generated content for retry: " + message_content)
 
     note = ("\n\n\n-------+-------\n\n\n_This message was generated and posted by the CDSCoffeeRouletteBot :robot_face: using "
@@ -113,28 +105,6 @@ def handle_reaction_added(event):
         log_reaction(user_id, reaction)
 
 
-def log_reaction(user_id, reaction):
-    # log the user's reaction to a file
-    with open("reactions.txt", "a") as file:
-        file.write(f"{user_id},{reaction}\n")
-    print(f"Logged reaction {reaction} from user {user_id}")
-
-
-def read_reactions():
-    reactions = {}
-    try:
-        with open("reactions.txt", "r") as file:
-            for line in file:
-                user_id, reaction = line.strip().split(',')
-                if user_id in reactions:
-                    reactions[user_id].append(reaction)
-                else:
-                    reactions[user_id] = [reaction]
-    except FileNotFoundError:
-        print("No reactions file found.")
-    return reactions
-
-
 def notify_users(pairs):
     for pair in pairs:
         if len(pair) == 2:
@@ -149,41 +119,6 @@ def return_user_message_trio(user1, user2):
 
 def return_user_message_pair(user1):
     return f"You've been paired with <@{user1}> for #cds-coffee-roulette! Please arrange a meeting."
-
-
-def clear_reaction_logs():
-    open("reactions.txt", "w").close()
-
-
-# store the timestamp in timestamp_of_last_post.txt
-def store_message_ts(timestamp):
-    temp_file_path = ""
-    try:
-        # Create a temp file
-        with tempfile.NamedTemporaryFile(delete=False, mode='w', dir='.') as tmpfile:
-            temp_file_path = tmpfile.name
-            tmpfile.write(timestamp)
-
-        # Rename temp file replacing the old file
-        os.replace(temp_file_path, "timestamp_of_last_post.txt")
-    except Exception as e:
-        print(f"Failed to write timestamp: {e}")
-        # Cleanup if the rename failed
-        if temp_file_path and os.path.exists(temp_file_path):
-            os.unlink(temp_file_path)
-
-
-# get the weekly timestamp from the last post
-def get_current_weekly_message_ts():
-    try:
-        with open("timestamp_of_last_post.txt", "r") as file:
-            return file.read().strip()
-    except FileNotFoundError:
-        print("Timestamp file not found. Ensure the message is posted first.")
-        return None
-    except IOError as e:
-        print(f"Error reading timestamp file: {e}")
-        return None
 
 
 def pair_users():
