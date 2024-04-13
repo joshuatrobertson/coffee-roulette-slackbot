@@ -30,6 +30,11 @@ def clear_reaction_logs():
     open("reactions.txt", "w").close()
 
 
+# Function to clear reaction logs
+def clear_timestamp_of_last_post():
+    open("timestamp_of_last_post.txt", "w").close()
+
+
 # Function to store the timestamp of the last post
 def store_message_ts(timestamp):
     temp_file_path = ""
@@ -61,4 +66,3 @@ def get_current_weekly_message_ts():
     except IOError as e:
         print(f"Error reading timestamp file: {e}")
         return None
-

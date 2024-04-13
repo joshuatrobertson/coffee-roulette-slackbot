@@ -6,7 +6,7 @@ from slack_bolt import App
 import re
 from ai_functions import generate_weekly_message
 from file_operations import log_reaction, read_reactions, clear_reaction_logs, store_message_ts, \
-    get_current_weekly_message_ts
+    get_current_weekly_message_ts, clear_timestamp_of_last_post
 import tempfile
 
 channel_id = "C06T4HJ4Y5Q"
@@ -115,6 +115,7 @@ def pair_users():
 
     # Group users by their reactions
     for user, emoji in reactions.items():
+        print(f"Emoji: {emoji}")
         emoji_tuple = tuple(emoji)  # Convert list to tuple
         if emoji_tuple not in grouped_users:
             grouped_users[emoji_tuple] = []
@@ -133,7 +134,8 @@ def pair_users():
 
     # Notify users of their pairs or trios
     notify_users(pairs)
-    clear_reaction_logs()  # Clear the file after pairing
+    clear_reaction_logs()  # Clear the reactions file after pairing
+    clear_timestamp_of_last_post() # Clear the last timestamp to end the weeks roulette
 
 
 # Message either 2 or 3 users
