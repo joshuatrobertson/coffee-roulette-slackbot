@@ -1,3 +1,4 @@
+import logging
 import os
 import random
 import datetime
@@ -99,59 +100,76 @@ def handle_reaction_added(event):
             log_reaction(user_id, reaction)
 
     except KeyError as e:
-        # Log the exception and the event that caused it
-        print(f"KeyError encountered: {str(e)}")
-        print(f"Received event: {event}")
+        logging.error(f"KeyError encountered: {str(e)}")
+        logging.error(f"Received event: {event}")
+
+
+def pair_users():
+    raw_reactions = read_reactions()
+    reactions = {}
+
+    # Remove duplicates, keeping the last reaction
+    for user, emoji in raw_reactions.items():
+        reactions[user] = emoji
+
+    # Group users by their emoji reactions
+    grouped_users = {}
+    for user, emoji in reactions.items():
+        if emoji not in grouped_users:
+            grouped_users[emoji] = []
+        grouped_users[emoji].append(user)
+
+    # List to store pairs and any leftover users
+    pairs = []
+    leftover_users = []
+
+    # Form groups based on emojis and collect leftovers
+    for emoji, users in grouped_users.items():
+        random.shuffle(users)  # Shuffle to randomize pairing
+        while len(users) >= 2:
+            pairs.append((users.pop(), users.pop()))
+        if users:
+            leftover_users.extend(users)
+
+    # Handle leftover users by random pairing
+    random.shuffle(leftover_users)
+    while len(leftover_users) >= 2:
+        pairs.append((leftover_users.pop(), leftover_users.pop()))
+
+    # If one user is left after all pairings
+    if leftover_users:
+        if pairs:
+            pairs[-1] += (leftover_users.pop(),)  # Add to the last group to form a trio
+
+    # Notify and clean up
+    notify_users(pairs)
+    clear_reaction_logs()
+    clear_timestamp_of_last_post()
 
 
 def notify_users(pairs):
     for pair in pairs:
         if len(pair) == 2:
+            logging.info(f"Message sent to pair: {pair[0], pair[1]}")
             message_pair(pair[0], pair[1])
         elif len(pair) == 3:
+            logging.info(f"Message sent to trio: {pair[0], pair[1], pair[2]}")
             message_trio(pair[0], pair[1], pair[2])
 
 
-def pair_users():
-    reactions = read_reactions()  # Expected to return a dict like {'U123': 'emoji_one', 'U456': 'emoji_two', ...}
-    grouped_users = {}  # Dict to hold users grouped by emoji
-
-    # Group users by their reactions
-    for user, emoji in reactions.items():
-        print(f"Emoji: {emoji}")
-        emoji_tuple = tuple(emoji)  # Convert list to tuple
-        if emoji_tuple not in grouped_users:
-            grouped_users[emoji_tuple] = []
-        grouped_users[emoji_tuple].append(user)
-
-    # Create pairs within each emoji group
-    pairs = []
-    for users in grouped_users.values():
-        random.shuffle(users)  # Shuffle users within the same emoji group
-        while len(users) >= 2:
-            pairs.append((users.pop(), users.pop()))
-
-        # If an odd number of users, optionally add the last one to the last created pair
-        if users and pairs:
-            pairs[-1] += (users.pop(),)
-
-    # Notify users of their pairs or trios
-    notify_users(pairs)
-    clear_reaction_logs()  # Clear the reactions file after pairing
-    clear_timestamp_of_last_post() # Clear the last timestamp to end the weeks roulette
-
-
 def message_pair(user1, user2):
+    print(f"Sending message to pair: {user1}, {user2}")
     slack_app.client.chat_postMessage(channel=user1,
-                                      text=f"You've been paired with <@{user2}> for #cds-coffee-roulette! Please arrange a meeting.")
+                                      text=f"You've been paired with <@{user2}> for #coffee-roulette! Please arrange a meeting.")
     slack_app.client.chat_postMessage(channel=user2,
-                                      text=f"You've been paired with <@{user1}> for #cds-coffee-roulette! Please arrange a meeting.")
+                                      text=f"You've been paired with <@{user1}> for #coffee-roulette! Please arrange a meeting.")
 
 
 def message_trio(user1, user2, user3):
+    print(f"Sending message to trio: {user1}, {user2}")
     slack_app.client.chat_postMessage(channel=user1,
-                                      text=f"You're in a trio with <@{user2}> and <@{user3}> for #cds-coffee-roulette! Please arrange a meeting.")
+                                      text=f"You're in a trio with <@{user2}> and <@{user3}> for #coffee-roulette! Please arrange a meeting.")
     slack_app.client.chat_postMessage(channel=user2,
-                                      text=f"You're in a trio with <@{user1}> and <@{user3}> for #cds-coffee-roulette! Please arrange a meeting.")
+                                      text=f"You're in a trio with <@{user1}> and <@{user3}> for #coffee-coffee-roulette! Please arrange a meeting.")
     slack_app.client.chat_postMessage(channel=user3,
-                                      text=f"You're in a trio with <@{user1}> and <@{user2}> for #cds-coffee-roulette! Please arrange a meeting.")
+                                      text=f"You're in a trio with <@{user1}> and <@{user2}> for #coffee-coffee-roulette! Please arrange a meeting.")
