@@ -106,7 +106,10 @@ def handle_reaction_added(event):
 
 def notify_users(pairs):
     for pair in pairs:
-        message_users(*pair)
+        if len(pair) == 2:
+            message_pair(pair[0], pair[1])
+        elif len(pair) == 3:
+            message_trio(pair[0], pair[1], pair[2])
 
 
 def pair_users():
@@ -138,18 +141,17 @@ def pair_users():
     clear_timestamp_of_last_post() # Clear the last timestamp to end the weeks roulette
 
 
-# Message either 2 or 3 users
-def message_users(*users):
-    if len(users) < 2:
-        raise ValueError("At least two users are required to send a message.")
+def message_pair(user1, user2):
+    slack_app.client.chat_postMessage(channel=user1,
+                                      text=f"You've been paired with <@{user2}> for #cds-coffee-roulette! Please arrange a meeting.")
+    slack_app.client.chat_postMessage(channel=user2,
+                                      text=f"You've been paired with <@{user1}> for #cds-coffee-roulette! Please arrange a meeting.")
 
-    # Generate the message for each user by mentioning all other users
-    for i in range(len(users)):
-        # Create a list of all users except the current one being messaged
-        other_users = [f"<@{user}>" for j, user in enumerate(users) if i != j]
-        if len(other_users) > 1: # other users is greater than 1 i.e. a trio
-            message_text = f"You've been paired with {', '.join(other_users[:-1])} and {other_users[-1]} for #cds-coffee-roulette! Please arrange a meeting."
-        else:
-            message_text = f"You've been paired with {other_users[0]} for #cds-coffee-roulette! Please arrange a meeting." # pair as only one other user
-        # Send the message to the current user
-        slack_app.client.chat_postMessage(channel=users[i], text=message_text)
+
+def message_trio(user1, user2, user3):
+    slack_app.client.chat_postMessage(channel=user1,
+                                      text=f"You're in a trio with <@{user2}> and <@{user3}> for #cds-coffee-roulette! Please arrange a meeting.")
+    slack_app.client.chat_postMessage(channel=user2,
+                                      text=f"You're in a trio with <@{user1}> and <@{user3}> for #cds-coffee-roulette! Please arrange a meeting.")
+    slack_app.client.chat_postMessage(channel=user3,
+                                      text=f"You're in a trio with <@{user1}> and <@{user2}> for #cds-coffee-roulette! Please arrange a meeting.")
