@@ -105,12 +105,14 @@ def handle_reaction_added(event):
 
 
 def pair_users():
+    logging.info("Reading reactions from txt file")
     raw_reactions = read_reactions()
     reactions = {}
 
-    # Remove duplicates, keeping the last reaction
+    # Remove duplicates, by iterating through a dictionary keeping the last reaction
     for user, emoji in raw_reactions.items():
         reactions[user] = emoji
+    logging.info(f"Filtered reactions to remove duplicates: {reactions}")
 
     # Group users by their emoji reactions
     grouped_users = {}
@@ -118,14 +120,15 @@ def pair_users():
         if emoji not in grouped_users:
             grouped_users[emoji] = []
         grouped_users[emoji].append(user)
+    logging.info(f"Users grouped by emoji: {grouped_users}")
 
     # List to store pairs and any leftover users
     pairs = []
     leftover_users = []
 
-    # Form groups based on emojis and collect leftovers
+    # Form groups based on emojis and collect leftovers, grouping by emoji to join associated users together
     for emoji, users in grouped_users.items():
-        random.shuffle(users)  # Shuffle to randomize pairing
+        random.shuffle(users)  # Shuffle by users (already grouped by emoji) to randomize pairing
         while len(users) >= 2:
             pairs.append((users.pop(), users.pop()))
         if users:
@@ -134,7 +137,9 @@ def pair_users():
     # Handle leftover users by random pairing
     random.shuffle(leftover_users)
     while len(leftover_users) >= 2:
-        pairs.append((leftover_users.pop(), leftover_users.pop()))
+        pair = (leftover_users.pop(), leftover_users.pop())
+        pairs.append(pair)
+        logging.info(f"Formed random pair from leftovers: {pair}")
 
     # If one user is left after all pairings
     if leftover_users:
