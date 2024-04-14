@@ -103,6 +103,7 @@ def handle_reaction_added(event):
         logging.error(f"KeyError encountered: {str(e)}")
         logging.error(f"Received event: {event}")
 
+
 def group_users_by_emoji(reactions):
     if len(reactions) <= 1:
         raise ValueError("Cannot pair users because fewer than two users reacted")
