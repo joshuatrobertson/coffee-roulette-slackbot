@@ -103,53 +103,53 @@ def handle_reaction_added(event):
         logging.error(f"KeyError encountered: {str(e)}")
         logging.error(f"Received event: {event}")
 
+def group_users_by_emoji(reactions):
+    if len(reactions) <= 1:
+        raise ValueError("Cannot pair users because fewer than two users reacted")
 
-def pair_users():
-    logging.info("Reading reactions from txt file")
-    raw_reactions = read_reactions()
-    reactions = {}
-
-    # Remove duplicates, by iterating through a dictionary keeping the last reaction
-    for user, emoji in raw_reactions.items():
-        reactions[user] = emoji
-    logging.info(f"Filtered reactions to remove duplicates: {reactions}")
-
-    # Group users by their emoji reactions
     grouped_users = {}
     for user, emoji in reactions.items():
-        if emoji not in grouped_users:
-            grouped_users[emoji] = []
-        grouped_users[emoji].append(user)
+        grouped_users.setdefault(emoji, []).append(user)
     logging.info(f"Users grouped by emoji: {grouped_users}")
+    return grouped_users
 
-    # List to store pairs and any leftover users
+
+def form_pairs(grouped_users):
     pairs = []
     leftover_users = []
 
-    # Form groups based on emojis and collect leftovers, grouping by emoji to join associated users together
+    # Shuffle and pair users grouped by the same emoji
     for emoji, users in grouped_users.items():
-        random.shuffle(users)  # Shuffle by users (already grouped by emoji) to randomize pairing
+        random.shuffle(users)
         while len(users) >= 2:
             pairs.append((users.pop(), users.pop()))
         if users:
             leftover_users.extend(users)
 
-    # Handle leftover users by random pairing
+    return pairs, leftover_users
+
+
+def handle_leftovers(leftover_users, pairs):
     random.shuffle(leftover_users)
     while len(leftover_users) >= 2:
-        pair = (leftover_users.pop(), leftover_users.pop())
-        pairs.append(pair)
-        logging.info(f"Formed random pair from leftovers: {pair}")
+        pairs.append((leftover_users.pop(), leftover_users.pop()))
+    if leftover_users and pairs:
+        pairs[-1] += (leftover_users.pop(),)
 
-    # If one user is left after all pairings
-    if leftover_users:
-        if pairs:
-            pairs[-1] += (leftover_users.pop(),)  # Add to the last group to form a trio
 
-    # Notify and clean up
+def pair_users():
+    # Read from file
+    reactions = read_reactions()
+    # Group users by emoji
+    grouped_users = group_users_by_emoji(reactions)
+    # Create pairs from this and add any leftover users to a list (when odd number)
+    pairs, leftover_users = form_pairs(grouped_users)
+    # Randomly assign any leftovers
+    handle_leftovers(leftover_users, pairs)
+    # Notify the users of their match
     notify_users(pairs)
+    # Clear reactions to start the roulette again
     clear_reaction_logs()
-    clear_timestamp_of_last_post()
 
 
 def notify_users(pairs):

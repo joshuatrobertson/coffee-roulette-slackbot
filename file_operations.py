@@ -9,17 +9,15 @@ def log_reaction(user_id, reaction):
     print(f"Logged reaction {reaction} from user {user_id}")
 
 
-# Function to read reactions from a file
+# Function to read reactions from a file and add to dictionary (one 1 emoji entry per user_id)
 def read_reactions():
     reactions = {}
     try:
         with open("reactions.txt", "r") as file:
             for line in file:
                 user_id, reaction = line.strip().split(',')
-                if user_id in reactions:
-                    reactions[user_id].append(reaction)
-                else:
-                    reactions[user_id] = [reaction]
+                # Update the reaction for the user, overwriting any previous value so only 1 is stored
+                reactions[user_id] = reaction
     except FileNotFoundError:
         print("No reactions file found.")
     return reactions
