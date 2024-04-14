@@ -195,6 +195,6 @@ def message_trio(user1, user2, user3):
     slack_app.client.chat_postMessage(channel=user1,
                                       text=f"You're in a trio with <@{user2}> and <@{user3}> for #coffee-roulette! Please arrange a meeting.")
     slack_app.client.chat_postMessage(channel=user2,
-                                      text=f"You're in a trio with <@{user1}> and <@{user3}> for #coffee-coffee-roulette! Please arrange a meeting.")
+                                      text=f"You're in a trio with <@{user1}> and <@{user3}> for #coffee-roulette! Please arrange a meeting.")
     slack_app.client.chat_postMessage(channel=user3,
-                                      text=f"You're in a trio with <@{user1}> and <@{user2}> for #coffee-coffee-roulette! Please arrange a meeting.")
+                                      text=f"You're in a trio with <@{user1}> and <@{user2}> for #coffee-roulette! Please arrange a meeting.")

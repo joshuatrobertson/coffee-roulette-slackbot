@@ -1,6 +1,8 @@
 import os
 import tempfile
 
+BOT_USER_ID = os.getenv('SLACK_BOT_USER_ID')
+
 
 # Function to log a user's reaction to a file
 def log_reaction(user_id, reaction):
@@ -16,6 +18,8 @@ def read_reactions():
         with open("reactions.txt", "r") as file:
             for line in file:
                 user_id, reaction = line.strip().split(',')
+                if user_id == BOT_USER_ID:
+                    continue  # Skip adding reaction if it's from the bot
                 # Update the reaction for the user, overwriting any previous value so only 1 is stored
                 reactions[user_id] = reaction
     except FileNotFoundError:
