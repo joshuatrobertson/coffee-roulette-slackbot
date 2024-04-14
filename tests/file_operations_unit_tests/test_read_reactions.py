@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import mock_open, patch
-from file_operations import read_reactions  # Replace 'your_module_name' with the actual name of your module
+from file_operations import read_reactions
 
 
 class TestReadReactions(unittest.TestCase):
@@ -32,7 +32,8 @@ class TestReadReactions(unittest.TestCase):
 
     @patch('builtins.open', new_callable=mock_open, read_data="user1,:smile:\nuser3,:tea:\nuser1,:smile:")
     def test_reactions_with_duplicates(self, mock_file):
-        # Test reading reactions to ensure duplicates are handled correctly (i.e., they are not removed).
+        # Test reading reactions to ensure duplicates are handled correctly (i.e., they are not removed). Although
+        # should not occur as it is a dictionary
         expected_result = {
             'user1': ':smile:',
             'user3': ':tea:'

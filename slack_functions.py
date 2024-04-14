@@ -43,11 +43,9 @@ def post_weekly_message(retry_count=0, max_retries=3):
 
     use_numbered_emojis = retry_count == 2  # Use numbered emojis only on the third attempt
     message_content = generate_message_for_week(use_numbered_emojis)
-    print("Generated content: " + message_content)
 
     # Try to fetch the emojis
     emojis = extract_emojis_from_message(message_content)
-    print("Extracted Emojis:", emojis)
     if len(emojis) != 3:
         print("Error: Number of extracted emojis is not 3. Retrying...")
         post_weekly_message(retry_count + 1, max_retries)
@@ -60,7 +58,6 @@ def post_weekly_message(retry_count=0, max_retries=3):
 
     message_ts = slack_app.client.chat_postMessage(channel=channel_id, text=message_content)['ts']
     store_message_ts(message_ts)
-    print("Timestamp of posted message: " + message_ts)
 
     for emoji in emojis:
         try:
@@ -85,14 +82,10 @@ def extract_emojis_from_message(message_content):
 @slack_app.event("reaction_added")
 def handle_reaction_added(event):
     current_ts = get_current_weekly_message_ts()
-    print("TIMESTAMP: " + current_ts)
-    print(f"Timestamp of weekly message after fetching is {current_ts}")
-    print("reaction stored!")
 
     try:
         # Attempt to extract timestamp from event['item']
         reaction_msg_ts = event['event']['item']['ts']
-        print("Timestamp of reaction: " + reaction_msg_ts)
 
         if reaction_msg_ts == current_ts:
             user_id = event['event']['user']
@@ -112,21 +105,17 @@ def group_users_by_emoji(reactions):
     return grouped_users
 
 
-def handle_leftovers(leftover_users, pairs):
+def handle_leftovers(leftover_users):
     random.shuffle(leftover_users)
+    pairs = []
 
     # Pair leftover users
-    while len(leftover_users) >= 2:
+    while len(leftover_users) > 1:  # Ensure there are at least two users to form a pair
         pair = (leftover_users.pop(), leftover_users.pop())
         pairs.append(pair)
 
-    # If there is only one user left, add them to the last pair
-    if leftover_users and pairs:
-        pairs[-1] += (leftover_users.pop(),)
-
     # Notify all formed pairs
-    for pair in pairs:
-        notify_users(pair)
+    notify_users(pairs)
 
 
 def pair_users():
@@ -142,8 +131,19 @@ def pair_users():
 
 def form_pairs_and_notify_users(reactions):
     grouped_users = group_users_by_emoji(reactions)
+    total_users = sum(len(users) for users in grouped_users.values())
     pairs = []
     leftover_users = []
+
+    # Early exit if no users are available
+    if total_users == 0:
+        return []
+
+    # Check if there is exactly one user overall and handle it
+    if total_users == 1:
+        single_user = next(iter(next(iter(grouped_users.values()))))
+        notify_user_about_pairing_issue(single_user)
+        return []  # Return nothing as a leftover (no pairs or trios can be formed)
 
     # Form pairs
     for emoji, users in grouped_users.items():
@@ -153,14 +153,16 @@ def form_pairs_and_notify_users(reactions):
             pairs.append(pair)
         leftover_users.extend(users)
 
-    # If there is only one user left, add them to the last pair
-    if len(leftover_users) == 1 and pairs:
+    # If there is an odd number, add the last user to a trio, that way leftover_users can all be paired and should only
+    # have 1 trio
+    if len(leftover_users) % 2 == 1 and pairs:
         pairs[-1] += (leftover_users.pop(),)
 
-    # Notify all formed pairs
-    for pair in pairs:
-        notify_users(pair)
+    # Notify all formed pairs if any pairs exist
+    if pairs:
+        notify_users(pairs)
 
+    # Return an even number of leftover_users
     return leftover_users
 
 
@@ -174,6 +176,12 @@ def notify_users(pairs):
             message_trio(pair[0], pair[1], pair[2])
 
 
+def notify_user_about_pairing_issue(user):
+    slack_app.client.chat_postMessage(channel=user,
+                                      text=f"Hi, {user}, you were the only one who reacted to coffee roulette "
+                                           f"this week :upside_down_face:, please try again next week")
+
+
 def message_pair(user1, user2):
     print(f"Sending message to pair: {user1}, {user2}")
     slack_app.client.chat_postMessage(channel=user1,
@@ -183,7 +191,7 @@ def message_pair(user1, user2):
 
 
 def message_trio(user1, user2, user3):
-    print(f"Sending message to trio: {user1}, {user2}")
+    print(f"Sending message to trio: {user1}, {user2}, {user3}")
     slack_app.client.chat_postMessage(channel=user1,
                                       text=f"You're in a trio with <@{user2}> and <@{user3}> for #coffee-roulette! Please arrange a meeting.")
     slack_app.client.chat_postMessage(channel=user2,
