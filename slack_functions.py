@@ -184,17 +184,29 @@ def notify_user_about_pairing_issue(user):
 
 def message_pair(user1, user2):
     print(f"Sending message to pair: {user1}, {user2}")
-    slack_app.client.chat_postMessage(channel=user1,
-                                      text=f"You've been paired with <@{user2}> for #coffee-roulette! Please arrange a meeting.")
-    slack_app.client.chat_postMessage(channel=user2,
-                                      text=f"You've been paired with <@{user1}> for #coffee-roulette! Please arrange a meeting.")
+    response_1 = slack_app.client.chat_postMessage(channel=user1,
+                                                  text=f"You've been paired with <@{user2}> for #coffee-roulette! Please arrange a meeting.")
+    response_2 = slack_app.client.chat_postMessage(channel=user2,
+                                                  text=f"You've been paired with <@{user1}> for #coffee-roulette! Please arrange a meeting.")
+
+    if not response_1['ok']:
+        logging.error(f"Failed to send message to {user1}: {response_1['error']}")
+    if not response_2['ok']:
+        logging.error(f"Failed to send message to {user2}: {response_2['error']}")
 
 
 def message_trio(user1, user2, user3):
     print(f"Sending message to trio: {user1}, {user2}, {user3}")
-    slack_app.client.chat_postMessage(channel=user1,
+    response_1 = slack_app.client.chat_postMessage(channel=user1,
                                       text=f"You're in a trio with <@{user2}> and <@{user3}> for #coffee-roulette! Please arrange a meeting.")
-    slack_app.client.chat_postMessage(channel=user2,
+    response_2 = slack_app.client.chat_postMessage(channel=user2,
                                       text=f"You're in a trio with <@{user1}> and <@{user3}> for #coffee-roulette! Please arrange a meeting.")
-    slack_app.client.chat_postMessage(channel=user3,
+    response_3 = slack_app.client.chat_postMessage(channel=user3,
                                       text=f"You're in a trio with <@{user1}> and <@{user2}> for #coffee-roulette! Please arrange a meeting.")
+
+    if not response_1['ok']:
+        logging.error(f"Failed to send message to {user1}: {response_1['error']}")
+    if not response_2['ok']:
+        logging.error(f"Failed to send message to {user2}: {response_2['error']}")
+    if not response_3['ok']:
+        logging.error(f"Failed to send message to {user2}: {response_2['error']}")
