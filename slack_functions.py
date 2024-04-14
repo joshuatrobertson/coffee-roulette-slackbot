@@ -109,8 +109,14 @@ def handle_leftovers(leftover_users):
     random.shuffle(leftover_users)
     pairs = []
 
-    # Pair leftover users
-    while len(leftover_users) > 1:  # Ensure there are at least two users to form a pair
+    # Check if there are exactly three users left, handle trio case first
+    if len(leftover_users) == 3:
+        trio = (leftover_users.pop(), leftover_users.pop(), leftover_users.pop())
+        notify_users([trio])
+        return  # Exit the function since no more users to pair
+
+    # Continue with normal pair formation for other cases
+    while len(leftover_users) > 1:
         pair = (leftover_users.pop(), leftover_users.pop())
         pairs.append(pair)
 
