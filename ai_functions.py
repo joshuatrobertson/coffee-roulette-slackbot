@@ -22,7 +22,7 @@ def return_ibm_ai_prompt(prompt):
         "input": f"{prompt}",
         "parameters": {
             "temperature": 0,
-            "max_new_tokens": 100
+            "max_new_tokens": 1000
         }
     }
 
@@ -44,6 +44,7 @@ def return_ibm_ai_prompt(prompt):
         if results:
             # Extract 'generated_text' from the first result
             generated_text = results[0].get('generated_text', 'No generated text available.')
+            logging.info(f"Generated text: {generated_text}")
             return generated_text
 
 
