@@ -1,41 +1,53 @@
 import datetime
 import requests
+import os
+import json
 
-url = "https://bam-api.res.ibm.com/v2/text/chat?version=2024-04-19"
+ibm_url = "https://bam-api.res.ibm.com/v2/text/generation?version=2024-03-19"
 
-headers = {
+ibm_api_key = variable_value = os.getenv('IBM_API_KEY')
+
+ibm_header = {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer pak-vYsLLW6x0etpV5_gv4P-v1YZ_k9viZz5PwNttYrli2U'
+    'Authorization': 'Bearer '
 }
 
 
-def return_ibmai_prompt(prompt):
+def return_ibm_ai_prompt(prompt):
+    # Define the data payload
     data = {
-        "model_id": "ibm/granite-13b-chat-v2",
-        "conversation_id": "51bfdfbf-8d1e-41d8-a587-230700bcdab9",
-        "parent_id": "28cd1464-7130-4a9e-b310-10c8f21ce92c",
-        "messages": [
-            {
-                "role": "user",
-                f"content": f"{prompt}"
-            }
-        ],
+        "model_id": "google/flan-ul2",
+        "input": f"{prompt}",
         "parameters": {
-            "decoding_method": "greedy",
-            "repetition_penalty": 1.05,
-            "stop_sequences": [""],
-            "include_stop_sequence": False,
-            "min_new_tokens": 1,
-            "max_new_tokens": 1024
-        },
-        "moderations": {}
+            "temperature": 0,
+            "max_new_tokens": 100
+        }
     }
 
-    response = requests.post(url, json=data, headers=headers)
+    # Convert the data dictionary to a JSON-formatted string
+    data_json = json.dumps(data)
+
+    # Make the POST request to the API
+    response = requests.post(ibm_url, headers=ibm_header, data=data_json)
+
+    # Check the status code to see if the request was successful
     if response.status_code == 200:
-        return response.text
+        # Parse the JSON response
+        response_data = response.json()
+
+        # Access the 'results' part of the data
+        results = response_data.get('results', [])
+
+        # Check if results are available
+        if results:
+            # Extract 'generated_text' from the first result
+            generated_text = results[0].get('generated_text', 'No generated text available.')
+            print("Generated text:", generated_text)
+        else:
+            print("No results found in the response.")
     else:
-        return "Error: " + str(response.status_code)
+        # Print an error message if the request failed
+        print("Failed to retrieve data:", response.status_code, response.text)
 
 
 def write_prompt(day):
@@ -94,7 +106,7 @@ def generate_weekly_message(date, retry):
     else:
         prompt = (write_prompt(event))
 
-    return return_ibmai_prompt(prompt)
+    return return_ibm_ai_prompt(prompt)
 
 
 seasons = {

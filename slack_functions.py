@@ -66,7 +66,7 @@ def post_weekly_message(retry_count=0, max_retries=3):
             print(f"Error adding reaction {emoji}: {e}")
             slack_app.client.chat_delete(channel=channel_id, ts=message_ts)
             print("Deleted message due to emoji addition failure.")
-            post_weekly_message(retry_count + 1, max_retries)  # Optionally retry
+            post_weekly_message(retry_count + 1, max_retries)  # Optionally retry if we don't have 3 emojis
             return
 
 
