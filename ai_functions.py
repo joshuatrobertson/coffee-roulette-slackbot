@@ -31,7 +31,11 @@ def returnIBMAIPrompt(prompt):
         "moderations": {}
     }
 
-    return requests.post(url, json=data, headers=headers)
+    response = requests.post(url, json=data, headers=headers)
+    if response.status_code == 200:
+        return response.text
+    else:
+        return "Error: " + str(response.status_code)
 
 
 def write_prompt(day):

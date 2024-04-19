@@ -29,7 +29,6 @@ user_responses = {}
 # Function to generate the weekly message
 def generate_message_for_week(use_numbered_emojis=False):
     today = datetime.date.today().strftime('%d-%m')
-    # Customize this message as needed
     message_content = generate_weekly_message(today, use_numbered_emojis)
     print("Message content in generate_weekly_message: " + message_content)
     return message_content
