@@ -1,6 +1,4 @@
 import datetime
-import os
-from dotenv import load_dotenv
 import requests
 
 url = "https://bam-api.res.ibm.com/v2/text/chat?version=2024-04-19"
@@ -9,7 +7,6 @@ headers = {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer pak-vYsLLW6x0etpV5_gv4P-v1YZ_k9viZz5PwNttYrli2U'
 }
-
 
 
 def returnIBMAIPrompt(prompt):
@@ -282,7 +279,7 @@ special_days = {
     '03-07': "Stay Out of the Sun Day",
     '04-07': "Independence Day (USA)",
     '05-07': "Bikini Day",
-    '06-07': "International Kissing Day", #TODO: remove
+    '06-07': "International Kissing Day",  # TODO: remove
     '07-07': "World Chocolate Day",
     '08-07': "Video Games Day",
     '09-07': "Sugar Cookie Day",
