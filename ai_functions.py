@@ -18,7 +18,7 @@ ibm_header = {
 def return_ibm_ai_prompt(prompt):
     # Define the data payload
     data = {
-        "model_id": "meta-llama/llama-2-7b-chat",
+        "model_id": "ibm-mistralai/mixtral-8x7b-instruct-v01-q",
         "input": f"{prompt}",
         "parameters": {
             "temperature": 0,
@@ -52,8 +52,8 @@ def return_ibm_ai_prompt(prompt):
 def write_prompt(day):
     return (f"Make a slack post for my coffee roulette slack post. It should include the the day it falls on: {day}, "
             f"which a short, one sentence questions related to {day}. This should be followed by 3 answers, "
-            "which the users can react to with slack emojis. At the end of each answer there should be an emoji in the slack format (:["
-            "emoji]:). The answers should also be numbered. include a different slack format emoji with every answer so there "
+            "which the users can react to with emojis. At the end of each answer there should be an emoji in the slack format (:["
+            "emoji]:). The answers should also be numbered. include a different slack emoji with every answer so there "
             "should be 3 different slack emojis in the post that are found in the standard slack library. After this, "
             "close with the following sentence: 'React with your preference, and we'll match you for Coffee Roulette "
             "on Thursday!")
