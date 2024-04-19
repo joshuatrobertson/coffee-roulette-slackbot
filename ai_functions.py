@@ -18,7 +18,7 @@ ibm_header = {
 def return_ibm_ai_prompt(prompt):
     # Define the data payload
     data = {
-        "model_id": "ibm/falcon-40b-8lang-instruct,
+        "model_id": "ibm/falcon-40b-8lang-instruct",
         "input": f"{prompt}",
         "parameters": {
             "temperature": 0,
