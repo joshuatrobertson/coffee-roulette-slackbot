@@ -9,7 +9,7 @@ ibm_api_key = variable_value = os.getenv('IBM_API_KEY')
 
 ibm_header = {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer '
+    'Authorization': f'Bearer {ibm_api_key}'
 }
 
 
