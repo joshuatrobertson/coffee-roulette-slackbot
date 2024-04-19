@@ -90,18 +90,7 @@ def generate_weekly_message(date, retry):
     else:
         prompt = (write_prompt(event))
 
-    # Generate text using IBM's language model
-    response = co.generate(
-        model='command-r-plus',
-        prompt=prompt,
-        max_tokens=150,
-        temperature=0.2
-    )
-
-    # Extracting the generated text from the response
-    generated_text = response.generations[0].text
-
-    return generated_text
+    return returnIBMAIPrompt(prompt)
 
 
 seasons = {
