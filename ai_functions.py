@@ -9,7 +9,7 @@ headers = {
 }
 
 
-def returnIBMAIPrompt(prompt):
+def return_ibmai_prompt(prompt):
     data = {
         "model_id": "ibm/granite-13b-chat-v2",
         "conversation_id": "51bfdfbf-8d1e-41d8-a587-230700bcdab9",
@@ -94,7 +94,7 @@ def generate_weekly_message(date, retry):
     else:
         prompt = (write_prompt(event))
 
-    return returnIBMAIPrompt(prompt)
+    return return_ibmai_prompt(prompt)
 
 
 seasons = {
