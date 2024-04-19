@@ -18,7 +18,7 @@ ibm_header = {
 def return_ibm_ai_prompt(prompt):
     # Define the data payload
     data = {
-        "model_id": "ibm/granite-13b-base-v2",
+        "model_id": "ibm/granite-13b-chat-v2",
         "input": f"{prompt}",
         "parameters": {
             "temperature": 0,
@@ -51,21 +51,22 @@ def return_ibm_ai_prompt(prompt):
 
 
 def write_prompt(day):
-    return ("Make a slack post for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday "
-            "which means time for # cds-coffee-roulette!' It should include the period it falls on: " + day + " with "
-            "a short, one sentence question. There should be 3 short, complete answers (they should be numbered 1-3 in the format (1. 2. 3.) (no "
-            "more than 5 words) that users can react to with an emoji which matches the sentence (use the slack format ':[emoji]:', include a "
-            "different emoji with every answer so there should be 3 different emojis in the post that are found in the standard slack library."
-            "After the answers have a single closing sentence 'React with your preference, and we'll match you "
-            "for Coffee Roulette on Thursday!'")
+    return (f"Make a slack post for my coffee roulette slack post. It should include the the day it falls on: {day}, "
+            f"which a short, one sentence questions related to {day}. This should be followed by 3 answers, "
+            "which the users can react to. At the end of each answer there should be an emoji in the slack format (:["
+            "emoji]:). The answers should also be numbered. include a different emoji with every answer so there "
+            "should be 3 different emojis in the post that are found in the standard slack library. After this, "
+            "close with the following sentence: 'React with your preference, and we'll match you for Coffee Roulette "
+            "on Thursday!")
 
 
 # used in cases where the retry count is > 2 where no different emojis can be found
 def write_prompt_retry(day):
     return (f"Make a slack post for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday "
-            f"which means time for # cds-coffee-roulette!' It should include the period it falls on: {day} with "
-            f"a short, one sentence question related around {day}. There should be 3 short, complete answers (they should be numbered 1-3) in the format (1. 2. 3.)  (no "
-            "more than 5 words) that users can react to with a numbered emoji 1 to 3 (use the slack format :emoji:. The emojis should be :one:, :two: and :three:"
+            f"which means time for # cds-coffee-roulette!' It should include the day or period it falls on: {day} with "
+            f"a short, one sentence question related around {day}. There should be 3 short, complete answers (they "
+            f"should be numbered 1-3) in the format (1. 2. 3.)  (no more than 5 words) that users can react to with a "
+            f"numbered emoji 1 to 3 (use the slack format :emoji:. The emojis should be :one:, :two: and :three:"
             "After the answers have a single closing sentence 'React with your preference, and we'll match you "
             "for Coffee Roulette on Thursday!'")
 
