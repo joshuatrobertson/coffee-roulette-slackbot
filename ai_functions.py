@@ -49,13 +49,12 @@ def return_ibm_ai_prompt(prompt):
             return generated_text
 
 
-
 def write_prompt(day):
     return (f"Make a slack post for my coffee roulette slack post. It should include the the day it falls on: {day}, "
             f"which a short, one sentence questions related to {day}. This should be followed by 3 answers, "
-            "which the users can react to. At the end of each answer there should be an emoji in the slack format (:["
-            "emoji]:). The answers should also be numbered. include a different emoji with every answer so there "
-            "should be 3 different emojis in the post that are found in the standard slack library. After this, "
+            "which the users can react to with slack emojis. At the end of each answer there should be an emoji in the slack format (:["
+            "emoji]:). The answers should also be numbered. include a different slack format emoji with every answer so there "
+            "should be 3 different slack emojis in the post that are found in the standard slack library. After this, "
             "close with the following sentence: 'React with your preference, and we'll match you for Coffee Roulette "
             "on Thursday!")
 
