@@ -85,7 +85,6 @@ def handle_reaction_added(event):
     try:
         # Attempt to extract timestamp from event['item']
         reaction_msg_ts = event['event']['item']['ts']
-
         if reaction_msg_ts == current_ts:
             user_id = event['event']['user']
             reaction = event['event']['reaction']
