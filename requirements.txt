@@ -7,5 +7,4 @@ slack_bolt
 python-dotenv
 apscheduler
 pytz
-python-dotenv
 requests
