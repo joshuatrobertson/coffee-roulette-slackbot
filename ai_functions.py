@@ -1,4 +1,6 @@
 import datetime
+import logging
+
 import requests
 import os
 import json
@@ -42,12 +44,8 @@ def return_ibm_ai_prompt(prompt):
         if results:
             # Extract 'generated_text' from the first result
             generated_text = results[0].get('generated_text', 'No generated text available.')
-            print("Generated text:", generated_text)
-        else:
-            print("No results found in the response.")
-    else:
-        # Print an error message if the request failed
-        print("Failed to retrieve data:", response.status_code, response.text)
+            return generated_text
+
 
 
 def write_prompt(day):
