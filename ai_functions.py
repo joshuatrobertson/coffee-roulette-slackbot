@@ -18,7 +18,7 @@ ibm_header = {
 def return_ibm_ai_prompt(prompt):
     # Define the data payload
     data = {
-        "model_id": "ibm-mistralai/mixtral-8x7b-instruct-v01-q",
+        "model_id": "meta-llama/llama-2-13b-chat",
         "input": f"{prompt}",
         "parameters": {
             "temperature": 0,
