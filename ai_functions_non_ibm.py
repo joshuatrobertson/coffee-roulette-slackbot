@@ -1,40 +1,10 @@
 import datetime
-import os
-from dotenv import load_dotenv
-import requests
+import cohere
 
-url = "https://bam-api.res.ibm.com/v2/text/chat?version=2024-04-19"
+event = ""
 
-headers = {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer pak-vYsLLW6x0etpV5_gv4P-v1YZ_k9viZz5PwNttYrli2U'
-}
-
-
-
-def returnIBMAIPrompt(prompt):
-    data = {
-        "model_id": "ibm/granite-13b-chat-v2",
-        "conversation_id": "51bfdfbf-8d1e-41d8-a587-230700bcdab9",
-        "parent_id": "28cd1464-7130-4a9e-b310-10c8f21ce92c",
-        "messages": [
-            {
-                "role": "user",
-                f"content": f"{prompt}"
-            }
-        ],
-        "parameters": {
-            "decoding_method": "greedy",
-            "repetition_penalty": 1.05,
-            "stop_sequences": [""],
-            "include_stop_sequence": False,
-            "min_new_tokens": 1,
-            "max_new_tokens": 1024
-        },
-        "moderations": {}
-    }
-
-    return requests.post(url, json=data, headers=headers)
+# Initialize the Cohere client with your API key
+co = cohere.Client('uoQSq5wxhvw4bTa8hjLBWuQast6AqmeHWvONfdy3')
 
 
 def write_prompt(day):
@@ -93,7 +63,7 @@ def generate_weekly_message(date, retry):
     else:
         prompt = (write_prompt(event))
 
-    # Generate text using IBM's language model
+    # Generate text using Cohere's language model
     response = co.generate(
         model='command-r-plus',
         prompt=prompt,

@@ -184,7 +184,7 @@ def notify_users(pairs):
 
 def notify_user_about_pairing_issue(user):
     slack_app.client.chat_postMessage(channel=user,
-                                      text=f"Hi, {user}, you were the only one who reacted to coffee roulette "
+                                      text=f"Hi, <@{user}>, you were the only one who reacted to coffee roulette "
                                            f"this week :upside_down_face:, please try again next week")
 
 

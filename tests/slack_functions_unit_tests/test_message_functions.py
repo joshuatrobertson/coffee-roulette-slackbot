@@ -6,7 +6,7 @@ from slack_functions import message_pair, message_trio, slack_app
 
 class TestMessageFunctions(unittest.TestCase):
 
-    @patch('your_module.slack_app.client.chat_postMessage')
+    @patch('slack_functions.slack_app.client.chat_postMessage')
     def test_message_pair_success(self, mock_chat_post):
         # Setup
         mock_chat_post.return_value = {'ok': True}
@@ -22,8 +22,8 @@ class TestMessageFunctions(unittest.TestCase):
                     'text': 'You\'ve been paired with <@U123> for #coffee-roulette! Please arrange a meeting.'},),)]
         mock_chat_post.assert_has_calls(calls, any_order=True)
 
-    @patch('your_module.slack_app.client.chat_postMessage')
-    @patch('your_module.logging.error')
+    @patch('slack_functions.slack_app.client.chat_postMessage')
+    @patch('slack_functions.logging.error')
     def test_message_pair_failure(self, mock_logging, mock_chat_post):
         # Setup
         mock_chat_post.side_effect = [{'ok': False, 'error': 'some_error'}, {'ok': True}]
@@ -34,7 +34,7 @@ class TestMessageFunctions(unittest.TestCase):
         # Assert
         mock_logging.assert_called_once_with('Failed to send message to U123: some_error')
 
-    @patch('your_module.slack_app.client.chat_postMessage')
+    @patch('slack_functions.slack_app.client.chat_postMessage')
     def test_message_trio_success(self, mock_chat_post):
         # Setup
         mock_chat_post.return_value = {'ok': True}
@@ -54,8 +54,8 @@ class TestMessageFunctions(unittest.TestCase):
         ]
         mock_chat_post.assert_has_calls(expected_calls, any_order=True)
 
-    @patch('your_module.slack_app.client.chat_postMessage')
-    @patch('your_module.logging.error')
+    @patch('slack_functions.slack_app.client.chat_postMessage')
+    @patch('slack_functions.logging.error')
     def test_message_trio_failure(self, mock_logging, mock_chat_post):
         # Setup
         mock_chat_post.side_effect = [{'ok': False, 'error': 'error1'}, {'ok': False, 'error': 'error2'},
