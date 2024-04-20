@@ -78,10 +78,21 @@ def extract_emojis_from_message_slack_format(message_content):
     return emojis_list
 
 
+# Extract emojiis where the line starts with a number
 def extract_emojis_from_message(message_content):
-    # Extract all emojis using the emoji library
-    all_emojis = [char for char in message_content if char in emoji.UNICODE_EMOJI_ENGLISH]
-    return all_emojis
+    emojis_list = []
+    # Split the message content into lines
+    lines = message_content.split('\n')
+
+    # Iterate over each line
+    for line in lines:
+        # Check if the line starts with a digit
+        if line.strip() and line.strip()[0].isdigit():
+            # Extract emojis from the line
+            emojis_in_line = [char for char in line if char in emoji.UNICODE_EMOJI_ENGLISH]
+            emojis_list.extend(emojis_in_line)
+
+    return emojis_list
 
 
 # handles the reaction_added event - adds all emojis, so if a user reacts in any way to the post they will be matched
