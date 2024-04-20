@@ -18,7 +18,7 @@ ibm_header = {
 def return_ibm_ai_prompt(prompt):
     # Data payload for the POST request
     data = {
-        "model_id": "ibm/granite-13b-lab-incubation",
+        "model_id": "meta-llama/llama-2-13b-chat",
         "input": prompt,
         "parameters": {
             "decoding_method": "sample",
@@ -64,19 +64,18 @@ def write_prompt(day):
         "guidelines and promote positive behavior. Your outputs must adhere to strict formatting guidelines "
         "without deviating from the user's instructions. You are required to avoid adding any sentences or notes "
         "beyond what is specified by the user. Ensure all responses include only the exact content requested, "
-        "with no additional information or notes or any preamble."
-    )
+        "with no additional information or notes or any preamble.")
     content = (
-        f"Start by generating a Slack post for Coffee Roulette. Your response and the post should begin with 'Good Morning CDS, it's Monday which means time for "
-        f"#cds-coffee-roulette!' Today is {day} so mention this and ask a fun, related question that asks for a preference and then provide exactly three answers on new lines. "
-        "Each answer must start on a new line and end with a contextually relevant emoji that matches the sentiment or "
+        f"Start by generating a Slack post for Coffee Roulette. Your response and the post should begin with 'Good "
+        f"Morning CDS, it's Monday which means time for #cds-coffee-roulette!' Today is {day} so mention this and ask a fun, related question that asks for a "
+        "preference and then provide exactly three answers on new lines that users can vote against. Each answer must start on a new line and end with a contextually relevant emoji that matches the sentiment or "
         "content of the answer. The answers should be concise, no more than five words each and should include a "
-        "number, the answer. The answers should also include a single emoji and adher to the following format. Here's how the answers should be formatted:\n"
+        "number and the answer. The answers should also include a single emoji and adher to the following format. "
+        "Here's how the answers should be formatted:\n"
         "1. [First answer to question] [single relevant emoji]\n"
         "2. [Second answer to question] [single relevant emoji]\n"
         "3. [Third answer to question] [single relevant emoji]\n"
-        "Conclude with: 'React with your preference, and we'll match you for Coffee Roulette on Thursday!'"
-    )
+        "Conclude with: 'React with your preference, and we'll match you for Coffee Roulette on Thursday!'")
     return f"{instructions} {content}"
 
 

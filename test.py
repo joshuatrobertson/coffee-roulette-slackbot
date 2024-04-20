@@ -31,13 +31,13 @@ def write_prompt(day):
     content = (
         f"Start by generating a Slack post for Coffee Roulette. Your response and the post should begin with 'Good "
         f"Morning CDS, it's Monday which means time for #cds-coffee-roulette!' Today is {day} so mention this and ask a fun, related question that asks for a "
-        "preference and then provide exactly three answers on new lines. Each answer must start on a new line and end with a contextually relevant emoji that matches the sentiment or "
+        "preference and then provide exactly three answers on new lines that users can vote against. Each answer must start on a new line and end with a contextually relevant emoji that matches the sentiment or "
         "content of the answer. The answers should be concise, no more than five words each and should include a "
         "number and the answer. The answers should also include a single emoji and adher to the following format. "
         "Here's how the answers should be formatted:\n"
-        "1. [First answer to question] [single relevant emoji in slack format]\n"
-        "2. [Second answer to question] [single relevant emoji in slack format]\n"
-        "3. [Third answer to question] [single relevant emoji in slack format]\n"
+        "1. [First answer to question] [single relevant emoji]\n"
+        "2. [Second answer to question] [single relevant emoji]\n"
+        "3. [Third answer to question] [single relevant emoji]\n"
         "Conclude with: 'React with your preference, and we'll match you for Coffee Roulette on Thursday!'")
     return f"{instructions} {content}"
 
@@ -59,7 +59,7 @@ def extract_emojis_from_message(message_content):
 
 
 data = {
-    "model_id": "ibm/granite-13b-chat-v2",
+    "model_id": "meta-llama/llama-2-13b-chat",
     "input": write_prompt('Christmas'),
     "parameters": {
         "decoding_method": "sample",
