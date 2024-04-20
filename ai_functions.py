@@ -18,32 +18,22 @@ ibm_header = {
 def return_ibm_ai_prompt(prompt):
     # Data payload for the POST request
     data = {
-        "model_id": "ibm/granite-13b-chat-v2",
-        "messages": [
-            {
-                "role": "system",
-                "content": "You are an AI language model developed by IBM. Your outputs must adhere to strict "
-                           "formatting guidelines without deviating from the user's instructions. You are required to "
-                           "avoid adding any sentences or notes beyond what is specified by the user. Ensure all "
-                           "responses include only the exact content requested, with no additional information or "
-                           "notes."
-            },
-            {
-                "role": "user",
-                "content": f"{prompt}"
-            }
-        ],
+        "model_id": "ibm-mistralai/mixtral-8x7b-instruct-v01-q",
+        "input": write_prompt(prompt),
         "parameters": {
-            "decoding_method": "greedy",
+            "decoding_method": "sample",
+            "temperature": 0.2,
+            "top_p": 0.85,
+            "top_k": 20,
+            "typical_p": 1,
             "repetition_penalty": 1.05,
             "stop_sequences": [
                 "React with your preference, and we'll match you for Coffee Roulette on Thursday!"
             ],
             "include_stop_sequence": True,
             "min_new_tokens": 1,
-            "max_new_tokens": 200
-        },
-        "moderations": {}
+            "max_new_tokens": 400
+        }
     }
 
     # Convert the data dictionary to a JSON-formatted string
@@ -71,11 +61,25 @@ def return_ibm_ai_prompt(prompt):
 
 
 def write_prompt(day):
-    return ("Create a Slack post for Coffee Roulette. Start with 'Good Morning CDS, it's Monday which means time for "
-            f"#cds-coffee-roulette!' State that today is {day}. Ask a question around this with three response "
-            "options, each no more than five words and ending with a single emoji. End with 'React with your "
-            "preference, and we'll match you for Coffee Roulette on Thursday!' Ensure the post contains no additional "
-            "text or notes beyond this.")
+    instructions = (
+        "You are an AI language model developed by IBM. You are helpful and harmless and you follow ethical "
+        "guidelines and promote positive behavior. Your outputs must adhere to strict formatting guidelines "
+        "without deviating from the user's instructions. You are required to avoid adding any sentences or notes "
+        "beyond what is specified by the user. Ensure all responses include only the exact content requested, "
+        "with no additional information or notes or any preamble."
+    )
+    content = (
+        f"Start by generating a Slack post for Coffee Roulette. Your response and the post should begin with 'Good Morning CDS, it's Monday which means time for "
+        f"#cds-coffee-roulette!' Today is {day} so mention this and ask a fun, related question that asks for a preference and then provide exactly three answers on new lines. "
+        "Each answer must start on a new line and end with a contextually relevant emoji that matches the sentiment or "
+        "content of the answer. The answers should be concise, no more than five words each and should include a "
+        "number, the answer. The answers should also include a single emoji and adher to the following format. Here's how the answers should be formatted:\n"
+        "1. [First answer to question] [single relevant emoji]\n"
+        "2. [Second answer to question] [single relevant emoji]\n"
+        "3. [Third answer to question] [single relevant emoji]\n"
+        "Conclude with: 'React with your preference, and we'll match you for Coffee Roulette on Thursday!'"
+    )
+    return f"{instructions} {content}"
 
 
 def is_first_monday(date, season_start):

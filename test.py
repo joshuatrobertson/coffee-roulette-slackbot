@@ -1,48 +1,71 @@
+import os
 import requests
 import json
+import logging
 
-api = 'pak-vYsLLW6x0etpV5_gv4P-v1YZ_k9viZz5PwNttYrli2U'
+# Setup logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Define the URL for the API
-url = "https://bam-api.res.ibm.com/v2/text/generation?version=2024-03-19"
+ibm_url = "https://bam-api.res.ibm.com/v2/text/generation?version=2024-03-19"
+ibm_api_key = os.getenv('IBM_API_KEY')
 
-# Create the headers with the Content-Type and Authorization
-headers = {
+ibm_header = {
     'Content-Type': 'application/json',
-    'Authorization': f'Bearer {api}'  # Replace ****** with your actual bearer token
+    'Authorization': f'Bearer pak-vYsLLW6x0etpV5_gv4P-v1YZ_k9viZz5PwNttYrli2U'
 }
 
-# Define the data payload
+
+def write_prompt(day):
+    instructions = (
+        "You are an AI language model developed by IBM. You are helpful and harmless and you follow ethical "
+        "guidelines and promote positive behavior. Your outputs must adhere to strict formatting guidelines "
+        "without deviating from the user's instructions. You are required to avoid adding any sentences or notes "
+        "beyond what is specified by the user. Ensure all responses include only the exact content requested, "
+        "with no additional information or notes or any preamble."
+    )
+    content = (
+        f"Start by generating a Slack post for Coffee Roulette. Your response and the post should begin with 'Good Morning CDS, it's Monday which means time for "
+        f"#cds-coffee-roulette!' Today is {day} so mention this and ask a fun, related question that asks for a preference and then provide exactly three answers on new lines. "
+        "Each answer must start on a new line and end with a contextually relevant emoji that matches the sentiment or "
+        "content of the answer. The answers should be concise, no more than five words each and should include a "
+        "number, the answer. The answers should also include a single emoji and adher to the following format. Here's how the answers should be formatted:\n"
+        "1. [First answer to question] [single relevant emoji]\n"
+        "2. [Second answer to question] [single relevant emoji]\n"
+        "3. [Third answer to question] [single relevant emoji]\n"
+        "Conclude with: 'React with your preference, and we'll match you for Coffee Roulette on Thursday!'"
+    )
+    return f"{instructions} {content}"
+
+
+
 data = {
-    "model_id": "google/flan-ul2",
-    "input": "Write a tagline for an alumni association: Together we",
+    "model_id": "ibm-mistralai/mixtral-8x7b-instruct-v01-q",
+    "input": write_prompt('National Do No Housework Day'),
     "parameters": {
-        "temperature": 0,
-        "max_new_tokens": 3
+        "decoding_method": "sample",
+        "temperature": 0.6,
+        "top_p": 0.85,
+        "top_k": 20,
+        "typical_p": 1,
+        "repetition_penalty": 1.05,
+        "stop_sequences": [
+            "React with your preference, and we'll match you for Coffee Roulette on Thursday!"
+        ],
+        "include_stop_sequence": True,
+        "min_new_tokens": 1,
+        "max_new_tokens": 400
     }
 }
 
-# Convert the data dictionary to a JSON-formatted string
-data_json = json.dumps(data)
+response = requests.post(ibm_url, headers=ibm_header, data=json.dumps(data))
 
-# Make the POST request to the API
-response = requests.post(url, headers=headers, data=data_json)
-
-# Check the status code to see if the request was successful
-if response.status_code == 200:
-    # Parse the JSON response
-    response_data = response.json()
-
-    # Access the 'results' part of the data
-    results = response_data.get('results', [])
-
-    # Check if results are available
-    if results:
-        # Extract 'generated_text' from the first result
-        generated_text = results[0].get('generated_text', 'No generated text available.')
-        print("Generated text:", generated_text)
-    else:
-        print("No results found in the response.")
+if response.status_code != 200:
+    logging.error(f"Non-200 status code received: {response.status_code}")
+    logging.error(f"Response Body: {response.text}")  # Log the error message from the API
 else:
-    # Print an error message if the request failed
-    print("Failed to retrieve data:", response.status_code, response.text)
+    logging.info("200 Response from IBM API")
+    response_data = response.json()
+    results = response_data.get('results', [])
+    if results:
+        generated_text = results[0].get('generated_text', 'No generated text available.')
+        print(generated_text)
