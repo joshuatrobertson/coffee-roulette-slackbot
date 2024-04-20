@@ -16,14 +16,34 @@ ibm_header = {
 
 
 def return_ibm_ai_prompt(prompt):
-    # Define the data payload
+    # Data payload for the POST request
     data = {
         "model_id": "ibm/granite-13b-chat-v2",
-        "input": f"{prompt}",
+        "messages": [
+            {
+                "role": "system",
+                "content": "You are an AI language model developed by IBM. Your outputs must adhere to strict "
+                           "formatting guidelines without deviating from the user's instructions. You are required to "
+                           "avoid adding any sentences or notes beyond what is specified by the user. Ensure all "
+                           "responses include only the exact content requested, with no additional information or "
+                           "notes."
+            },
+            {
+                "role": "user",
+                "content": f"{prompt}"
+            }
+        ],
         "parameters": {
-            "temperature": 0,
-            "max_new_tokens": 1000
-        }
+            "decoding_method": "greedy",
+            "repetition_penalty": 1.05,
+            "stop_sequences": [
+                "React with your preference, and we'll match you for Coffee Roulette on Thursday!"
+            ],
+            "include_stop_sequence": True,
+            "min_new_tokens": 1,
+            "max_new_tokens": 200
+        },
+        "moderations": {}
     }
 
     # Convert the data dictionary to a JSON-formatted string
@@ -50,26 +70,11 @@ def return_ibm_ai_prompt(prompt):
 
 
 def write_prompt(day):
-    return ("Make a slack post for my coffee roulette slack post. It should start with 'Good Morning CDS, "
-            f"it's Monday which means time for # cds-coffee-roulette!' It should include the period it falls on: "
-            f"{day} with a short, one sentence question. There should be 3 short, complete answers (they should "
-            f"be numbered 1-3 in the format (1. 2. 3.) (no more than 5 words) that users can react to with an emoji "
-            f"which matches the sentence (use the slack format ':[emoji]:', include a different emoji with every "
-            f"answer so there should be 3 different emojis in the post that are found in the standard slack "
-            f"library.After the answers have a single closing sentence 'React with your preference, and we'll match "
-            f"you for Coffee Roulette on Thursday!'")
-
-
-# used in cases where the retry count is > 2 where no different emojis can be found
-def write_prompt_retry(day):
-    return (f"Make a slack post for my coffee roulette slack post. It should start with 'Good Morning CDS, "
-            f"it's Monday which means time for # cds-coffee-roulette!' It should include the period it falls on: "
-            f"{day} with a short, one sentence question. There should be 3 short, complete answers (they should "
-            f"be numbered 1-3 in the format (1. 2. 3.) (no more than 5 words) that users can react to with an emoji "
-            f"which matches the sentence (use the slack format ':[emoji]:', use the emojis :one: :two: and :three: "
-            f"answer so there should be 3 different emojis in the post that are found in the standard slack "
-            f"library.After the answers have a single closing sentence 'React with your preference, and we'll match "
-            f"you for Coffee Roulette on Thursday!'")
+    return ("Create a Slack post for Coffee Roulette. Start with 'Good Morning CDS, it's Monday which means time for "
+            "#cds-coffee-roulette!' State that today is {day}. Ask a question around this with three response "
+            "options, each no more than five words and ending with a single emoji. End with 'React with your "
+            "preference, and we'll match you for Coffee Roulette on Thursday!' Ensure the post contains no additional "
+            "text or notes beyond this.")
 
 
 def is_first_monday(date, season_start):
@@ -90,10 +95,7 @@ def generate_weekly_message(date, retry):
         season_start = datetime.date(today.year, month, day)
         if today == season_start or is_first_monday(today, season_start):
             print("Season: " + season_name)
-            if retry:
-                event = (write_prompt_retry(season_name))
-            else:
-                event = (write_prompt(season_name))
+            event = (write_prompt(season_name))
         break
 
     # Special Day check if not a season event
@@ -103,10 +105,8 @@ def generate_weekly_message(date, retry):
         print("Special day: " + event)
 
     # Construct the prompt
-    if retry:
-        prompt = (write_prompt_retry(event))
-    else:
-        prompt = (write_prompt(event))
+
+    prompt = (write_prompt(event))
 
     return return_ibm_ai_prompt(prompt)
 
