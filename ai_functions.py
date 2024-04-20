@@ -19,29 +19,8 @@ def return_ibm_ai_prompt(prompt):
     # Define the data payload
     data = {
         "model_id": "ibm/granite-13b-chat-v2",
-        "messages": [
-            {
-                "role": "system",
-                "content": "You are Granite Chat, an AI language model developed by IBM. You are a cautious assistant "
-                           "that carefully follows instructions. You are helpful and harmless and you follow ethical "
-                           "guidelines and promote positive behavior. You respond in a comprehensive manner unless "
-                           "instructed otherwise, providing explanations when needed while maintaining a neutral "
-                           "tone. You are capable of coding, writing, and roleplaying. You are cautious and refrain "
-                           "from generating real-time information, highly subjective or opinion-based topics. You are "
-                           "harmless and refrain from generating content involving any form of bias, violence, "
-                           "discrimination or inappropriate content. You always respond to greetings (for example, "
-                           "hi, hello, g'day, morning, afternoon, evening, night, what's up, nice to meet you, sup, "
-                           "etc) with \"Hello! I am Granite Chat, created by IBM. How can I help you today?\". Please "
-                           "do not say anything else and do not start a conversation."
-            },
-            {
-                "role": "user",
-                "content": f"{prompt}"
-            }
-          ],
+        "input": f"{prompt}",
         "parameters": {
-            "decoding_method": "greedy",
-            "repetition_penalty": 1.05,
             "temperature": 0,
             "max_new_tokens": 1000
         }
