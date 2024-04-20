@@ -19,10 +19,18 @@ def return_ibm_ai_prompt(prompt):
     # Define the data payload
     data = {
         "model_id": "ibm/granite-13b-chat-v2",
-        "input": f"{prompt}",
+        "messages": [
+            {
+              "role": "user",
+              "content": f"{prompt}"
+            }
+          ],
         "parameters": {
-            "temperature": 0,
-            "max_new_tokens": 1000
+            "decoding_method": "greedy",
+            "repetition_penalty": 1.05,
+            "include_stop_sequence": False,
+            "min_new_tokens": 1,
+            "max_new_tokens": 500
         }
     }
 
