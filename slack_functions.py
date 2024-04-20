@@ -3,14 +3,13 @@ import os
 import random
 import datetime
 import emoji
+import emoji_data_python
 from dotenv import load_dotenv
 from slack_bolt import App
 import re
 from ai_functions import generate_weekly_message
 from file_operations import log_reaction, read_reactions, clear_reaction_logs, store_message_ts, \
-    get_current_weekly_message_ts, clear_timestamp_of_last_post
-import tempfile
-import emoji as emoj
+    get_current_weekly_message_ts
 
 channel_id = "C06T4HJ4Y5Q"
 bot_added_emojis = []
@@ -33,6 +32,13 @@ def generate_message_for_week():
     message_content = generate_weekly_message()
     print("Message content in generate_weekly_message: " + message_content)
     return message_content
+
+
+def get_slack_emoji_name(unicode_emoji):
+    for emoji in emoji_data_python.emoji_data:
+        if emoji.char == unicode_emoji:
+            return emoji.short_name.replace("_", "-")  # Slack often uses hyphens instead of underscores
+    return None
 
 
 # Function to post the weekly message
@@ -86,12 +92,13 @@ def extract_emojis_from_message(message_content):
             # Check if the line starts with '1.', '2.', or '3.'
             if re.match(r'^[1-3]\.', line.strip()):
                 # Extract emojis from the line if it matches
-                emojis_in_line = [char for char in line if char in emoji.EMOJI_DATA]
-                emojis_in_message.extend(emojis_in_line)
+                emojis_in_line = [char for char in line if char in emoji_data_python.emoji_data]
+                # Convert each Unicode emoji to Slack format
+                slack_emojis = [get_slack_emoji_name(emoji) for emoji in emojis_in_line if get_slack_emoji_name(emoji)]
+                emojis_in_message.extend(slack_emojis)
         return emojis_in_message
     except AttributeError as e:
         logging.error(f"Failed to extract emojis due to: {str(e)}")
-        # TODO: Handle the error or use a fallback method
         return []
 
 
