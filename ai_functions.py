@@ -58,24 +58,26 @@ def return_ibm_ai_prompt(prompt):
 
 
 def write_prompt(day):
-    return ("Make a slack post for my coffee roulette slack post. When you are writing emojis, make sure to use "
-            "the slack format. It should start with 'Good Morning CDS, it's Monday which means time for "
-            f"# cds-coffee-roulette!' It should include the period it falls on: {day} with a short, one sentence "
-            f"question. There should then be 3 answers numbered 1, 2, 3. Each answer should be a single sentence, with "
-            f"a unique slack emoji for each answer (use the slack format ':[emoji]:') at the end of the sentence "
-            f"that users can react to. After the answers have a single closing sentence 'React with your preference, "
-            f"and we'll match you for Coffee Roulette on Thursday!'")
+    return ("Make a slack post for my coffee roulette slack post. It should start with 'Good Morning CDS, "
+            f"it's Monday which means time for # cds-coffee-roulette!' It should include the period it falls on: "
+            f"{day} with a short, one sentence question. There should be 3 short, complete answers (they should "
+            f"be numbered 1-3 in the format (1. 2. 3.) (no more than 5 words) that users can react to with an emoji "
+            f"which matches the sentence (use the slack format ':[emoji]:', include a different emoji with every "
+            f"answer so there should be 3 different emojis in the post that are found in the standard slack "
+            f"library.After the answers have a single closing sentence 'React with your preference, and we'll match "
+            f"you for Coffee Roulette on Thursday!'")
 
 
 # used in cases where the retry count is > 2 where no different emojis can be found
 def write_prompt_retry(day):
-    return (f"Make a slack post for my coffee roulette slack post. It should start with 'Good Morning CDS, it's Monday "
-            f"which means time for # cds-coffee-roulette!' It should include the period it falls on: {day} with "
-            f"a short, one sentence question related around {day}. There should be 3 short, complete answers (they "
-            f"should be numbered 1-3) in the format (1. 2. 3.)  (no more than 5 words) that users can react to with "
-            f"a numbered emoji 1 to 3 (use the slack format :emoji:. The emojis should be :one:, :two: and :three:"
-            "After the answers have a single closing sentence 'React with your preference, and we'll match you "
-            "for Coffee Roulette on Thursday!'")
+    return (f"Make a slack post for my coffee roulette slack post. It should start with 'Good Morning CDS, "
+            f"it's Monday which means time for # cds-coffee-roulette!' It should include the period it falls on: "
+            f"{day} with a short, one sentence question. There should be 3 short, complete answers (they should "
+            f"be numbered 1-3 in the format (1. 2. 3.) (no more than 5 words) that users can react to with an emoji "
+            f"which matches the sentence (use the slack format ':[emoji]:', use the emojis :one: :two: and :three: "
+            f"answer so there should be 3 different emojis in the post that are found in the standard slack "
+            f"library.After the answers have a single closing sentence 'React with your preference, and we'll match "
+            f"you for Coffee Roulette on Thursday!'")
 
 
 def is_first_monday(date, season_start):

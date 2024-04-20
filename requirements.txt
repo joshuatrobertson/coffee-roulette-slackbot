@@ -8,3 +8,4 @@ python-dotenv
 apscheduler
 pytz
 requests
+emoji

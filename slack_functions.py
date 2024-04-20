@@ -2,6 +2,7 @@ import logging
 import os
 import random
 import datetime
+import emoji
 from dotenv import load_dotenv
 from slack_bolt import App
 import re
@@ -71,10 +72,16 @@ def post_weekly_message(retry_count=0, max_retries=3):
 
 
 # use a regex to match both "1. :emoji:" and "1: :emoji:"
-def extract_emojis_from_message(message_content):
+def extract_emojis_from_message_slack_format(message_content):
     emoji_pattern = r'^\d[.:].*:(\w+):'
     emojis_list = re.findall(emoji_pattern, message_content, flags=re.MULTILINE)
     return emojis_list
+
+
+def extract_emojis_from_message(message_content):
+    # Extract all emojis using the emoji library
+    all_emojis = [char for char in message_content if char in emoji.UNICODE_EMOJI_ENGLISH]
+    return all_emojis
 
 
 # handles the reaction_added event - adds all emojis, so if a user reacts in any way to the post they will be matched
@@ -189,9 +196,9 @@ def notify_user_about_pairing_issue(user):
 def message_pair(user1, user2):
     print(f"Sending message to pair: {user1}, {user2}")
     response_1 = slack_app.client.chat_postMessage(channel=user1,
-                                                  text=f"You've been paired with <@{user2}> for #coffee-roulette! Please arrange a meeting.")
+                                                   text=f"You've been paired with <@{user2}> for #coffee-roulette! Please arrange a meeting.")
     response_2 = slack_app.client.chat_postMessage(channel=user2,
-                                                  text=f"You've been paired with <@{user1}> for #coffee-roulette! Please arrange a meeting.")
+                                                   text=f"You've been paired with <@{user1}> for #coffee-roulette! Please arrange a meeting.")
 
     if not response_1['ok']:
         logging.error(f"Failed to send message to {user1}: {response_1['error']}")
@@ -202,11 +209,11 @@ def message_pair(user1, user2):
 def message_trio(user1, user2, user3):
     print(f"Sending message to trio: {user1}, {user2}, {user3}")
     response_1 = slack_app.client.chat_postMessage(channel=user1,
-                                      text=f"You're in a trio with <@{user2}> and <@{user3}> for #coffee-roulette! Please arrange a meeting.")
+                                                   text=f"You're in a trio with <@{user2}> and <@{user3}> for #coffee-roulette! Please arrange a meeting.")
     response_2 = slack_app.client.chat_postMessage(channel=user2,
-                                      text=f"You're in a trio with <@{user1}> and <@{user3}> for #coffee-roulette! Please arrange a meeting.")
+                                                   text=f"You're in a trio with <@{user1}> and <@{user3}> for #coffee-roulette! Please arrange a meeting.")
     response_3 = slack_app.client.chat_postMessage(channel=user3,
-                                      text=f"You're in a trio with <@{user1}> and <@{user2}> for #coffee-roulette! Please arrange a meeting.")
+                                                   text=f"You're in a trio with <@{user1}> and <@{user2}> for #coffee-roulette! Please arrange a meeting.")
 
     if not response_1['ok']:
         logging.error(f"Failed to send message to {user1}: {response_1['error']}")
