@@ -28,9 +28,9 @@ user_responses = {}
 
 
 # Function to generate the weekly message
-def generate_message_for_week(use_numbered_emojis=False):
+def generate_message_for_week():
     today = datetime.date.today().strftime('%d-%m')
-    message_content = generate_weekly_message(today, use_numbered_emojis)
+    message_content = generate_weekly_message()
     print("Message content in generate_weekly_message: " + message_content)
     return message_content
 
@@ -40,9 +40,7 @@ def post_weekly_message(retry_count=0, max_retries=3):
     if retry_count >= max_retries:
         print(f"Failed to post message after {max_retries} attempts. Emoji addition failed.")
         return
-
-    use_numbered_emojis = retry_count == 2  # Use numbered emojis only on the third attempt
-    message_content = generate_message_for_week(use_numbered_emojis)
+    message_content = generate_message_for_week()
 
     # Try to fetch the emojis
     emojis = extract_emojis_from_message(message_content)
