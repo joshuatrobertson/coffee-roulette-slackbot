@@ -69,13 +69,14 @@ def post_weekly_message(retry_count=0, max_retries=3):
 
 
 # use a regex to match both "1. :emoji:" and "1: :emoji:"
+# TODO: Can remove if the below works, as better to input with actual emojis
 def extract_emojis_from_message_slack_format(message_content):
     emoji_pattern = r'^\d[.:].*:(\w+):'
     emojis_list = re.findall(emoji_pattern, message_content, flags=re.MULTILINE)
     return emojis_list
 
 
-# Extract emojiis where the line starts with a number between 1 and 3
+# Extract emojis where the line starts with a number between 1 and 3
 def extract_emojis_from_message(message_content):
     try:
         emojis_in_message = []
@@ -89,7 +90,7 @@ def extract_emojis_from_message(message_content):
         return emojis_in_message
     except AttributeError as e:
         logging.error(f"Failed to extract emojis due to: {str(e)}")
-        # Handle the error or use a fallback method
+        # TODO: Handle the error or use a fallback method
         return []
 
 

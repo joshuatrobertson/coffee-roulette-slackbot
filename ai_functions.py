@@ -19,7 +19,7 @@ def return_ibm_ai_prompt(prompt):
     # Data payload for the POST request
     data = {
         "model_id": "ibm/granite-13b-lab-incubation",
-        "input": write_prompt(prompt),
+        "input": prompt,
         "parameters": {
             "decoding_method": "sample",
             "temperature": 0.3,
@@ -47,8 +47,6 @@ def return_ibm_ai_prompt(prompt):
         print("200 Response from IBM API")
         # Parse the JSON response
         response_data = response.json()
-
-        # Access the 'results' part of the data
         results = response_data.get('results', [])
 
         # Check if results are available
