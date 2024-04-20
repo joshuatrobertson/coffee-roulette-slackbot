@@ -107,6 +107,7 @@ def generate_weekly_message():
     # Construct the prompt
 
     prompt = (write_prompt(event))
+    print("Written prompt: " + prompt)
 
     return return_ibm_ai_prompt(prompt)
 
