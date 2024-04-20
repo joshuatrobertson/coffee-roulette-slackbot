@@ -2,6 +2,7 @@ import logging
 import os
 import random
 import datetime
+
 import emoji
 import emoji_data_python
 from dotenv import load_dotenv
@@ -66,7 +67,7 @@ def post_weekly_message(retry_count=0, max_retries=3):
     for emoji in emojis:
         try:
             print("Adding Emoji", emoji)
-            slack_app.client.reactions_add(channel=channel_id, name=emoj.demojize(emoji), timestamp=message_ts)
+            slack_app.client.reactions_add(channel=channel_id, name=emoji, timestamp=message_ts)
         except Exception as e:
             print(f"Error adding reaction {emoji}: {e}")
             slack_app.client.chat_delete(channel=channel_id, ts=message_ts)
@@ -85,16 +86,15 @@ def extract_emojis_from_message_slack_format(message_content):
 
 # Extract emojis where the line starts with a number between 1 and 3
 def extract_emojis_from_message(message_content):
+    print("Extracting emojis..")
     try:
         emojis_in_message = []
-        # Split the message into lines and process each line
         for line in message_content.split('\n'):
-            # Check if the line starts with '1.', '2.', or '3.'
             if re.match(r'^[1-3]\.', line.strip()):
-                # Extract emojis from the line if it matches
-                emojis_in_line = [char for char in line if char in emoji_data_python.emoji_data]
-                # Convert each Unicode emoji to Slack format
-                slack_emojis = [get_slack_emoji_name(emoji) for emoji in emojis_in_line if get_slack_emoji_name(emoji)]
+                print("Line starts with a number.")
+                # Extract all emojis by checking each character
+                slack_emojis = [char for char in line if emoji.is_emoji(char)]
+                print(f"Slack Emojis: {slack_emojis}")
                 emojis_in_message.extend(slack_emojis)
         return emojis_in_message
     except AttributeError as e:
