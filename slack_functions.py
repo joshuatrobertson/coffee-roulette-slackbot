@@ -10,6 +10,7 @@ from ai_functions import generate_weekly_message
 from file_operations import log_reaction, read_reactions, clear_reaction_logs, store_message_ts, \
     get_current_weekly_message_ts, clear_timestamp_of_last_post
 import tempfile
+import emoji as emoj
 
 channel_id = "C06T4HJ4Y5Q"
 bot_added_emojis = []
@@ -59,7 +60,7 @@ def post_weekly_message(retry_count=0, max_retries=3):
     for emoji in emojis:
         try:
             print("Adding Emoji", emoji)
-            slack_app.client.reactions_add(channel=channel_id, name=emoji, timestamp=message_ts)
+            slack_app.client.reactions_add(channel=channel_id, name=emoj.demojize(emoji), timestamp=message_ts)
         except Exception as e:
             print(f"Error adding reaction {emoji}: {e}")
             slack_app.client.chat_delete(channel=channel_id, ts=message_ts)
