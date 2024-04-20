@@ -54,6 +54,7 @@ def return_ibm_ai_prompt(prompt):
 
     # Check the status code to see if the request was successful
     if response.status_code == 200:
+        print("200 Response from IBM API")
         # Parse the JSON response
         response_data = response.json()
 
@@ -71,7 +72,7 @@ def return_ibm_ai_prompt(prompt):
 
 def write_prompt(day):
     return ("Create a Slack post for Coffee Roulette. Start with 'Good Morning CDS, it's Monday which means time for "
-            "#cds-coffee-roulette!' State that today is {day}. Ask a question around this with three response "
+            f"#cds-coffee-roulette!' State that today is {day}. Ask a question around this with three response "
             "options, each no more than five words and ending with a single emoji. End with 'React with your "
             "preference, and we'll match you for Coffee Roulette on Thursday!' Ensure the post contains no additional "
             "text or notes beyond this.")
@@ -88,7 +89,6 @@ def is_first_monday(date, season_start):
 def generate_weekly_message():
     event = None
     today = datetime.date.today()
-    # Define your season start dates
 
     # Season or first Monday check
     for (month, day), season_name in seasons.items():
@@ -105,7 +105,6 @@ def generate_weekly_message():
         print("Special day: " + event)
 
     # Construct the prompt
-
     prompt = (write_prompt(event))
     print("Written prompt: " + prompt)
 
