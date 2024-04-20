@@ -1,7 +1,10 @@
 import os
+import re
+
 import requests
 import json
 import logging
+import emoji
 
 # Setup logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -36,14 +39,31 @@ def write_prompt(day):
     )
     return f"{instructions} {content}"
 
+# Extract emojiis where the line starts with a number
+
+def extract_emojis_from_message(message_content):
+    try:
+        emojis_in_message = []
+        # Split the message into lines and process each line
+        for line in message_content.split('\n'):
+            # Check if the line starts with '1.', '2.', or '3.'
+            if re.match(r'^[1-3]\.', line.strip()):
+                # Extract emojis from the line if it matches
+                emojis_in_line = [char for char in line if char in emoji.EMOJI_DATA]
+                emojis_in_message.extend(emojis_in_line)
+        return emojis_in_message
+    except AttributeError as e:
+        logging.error(f"Failed to extract emojis due to: {str(e)}")
+        # Handle the error or use a fallback method
+        return []
 
 
 data = {
-    "model_id": "ibm-mistralai/mixtral-8x7b-instruct-v01-q",
+    "model_id": "ibm/granite-13b-lab-incubation",
     "input": write_prompt('National Do No Housework Day'),
     "parameters": {
         "decoding_method": "sample",
-        "temperature": 0.6,
+        "temperature": 0.3,
         "top_p": 0.85,
         "top_k": 20,
         "typical_p": 1,
@@ -68,4 +88,9 @@ else:
     results = response_data.get('results', [])
     if results:
         generated_text = results[0].get('generated_text', 'No generated text available.')
-        print(generated_text)
+        print(f"generated text: {generated_text}")
+        emojis = extract_emojis_from_message(generated_text)
+        for e in emojis:
+            print(e)
+
+

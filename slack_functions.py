@@ -75,21 +75,22 @@ def extract_emojis_from_message_slack_format(message_content):
     return emojis_list
 
 
-# Extract emojiis where the line starts with a number
+# Extract emojiis where the line starts with a number between 1 and 3
 def extract_emojis_from_message(message_content):
-    emojis_list = []
-    # Split the message content into lines
-    lines = message_content.split('\n')
-
-    # Iterate over each line
-    for line in lines:
-        # Check if the line starts with a digit
-        if line.strip() and line.strip()[0].isdigit():
-            # Extract emojis from the line
-            emojis_in_line = [char for char in line if char in emoji.UNICODE_EMOJI_ENGLISH]
-            emojis_list.extend(emojis_in_line)
-
-    return emojis_list
+    try:
+        emojis_in_message = []
+        # Split the message into lines and process each line
+        for line in message_content.split('\n'):
+            # Check if the line starts with '1.', '2.', or '3.'
+            if re.match(r'^[1-3]\.', line.strip()):
+                # Extract emojis from the line if it matches
+                emojis_in_line = [char for char in line if char in emoji.EMOJI_DATA]
+                emojis_in_message.extend(emojis_in_line)
+        return emojis_in_message
+    except AttributeError as e:
+        logging.error(f"Failed to extract emojis due to: {str(e)}")
+        # Handle the error or use a fallback method
+        return []
 
 
 # handles the reaction_added event - adds all emojis, so if a user reacts in any way to the post they will be matched

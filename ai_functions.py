@@ -18,11 +18,11 @@ ibm_header = {
 def return_ibm_ai_prompt(prompt):
     # Data payload for the POST request
     data = {
-        "model_id": "ibm-mistralai/mixtral-8x7b-instruct-v01-q",
+        "model_id": "ibm/granite-13b-lab-incubation",
         "input": write_prompt(prompt),
         "parameters": {
             "decoding_method": "sample",
-            "temperature": 0.2,
+            "temperature": 0.3,
             "top_p": 0.85,
             "top_k": 20,
             "typical_p": 1,
