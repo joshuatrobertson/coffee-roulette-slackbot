@@ -9,3 +9,4 @@ apscheduler
 pytz
 requests
 emoji_data_python
+emoji
