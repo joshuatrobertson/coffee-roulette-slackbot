@@ -28,6 +28,20 @@ slack_app = App(
 user_responses = {}
 
 
+# Create a dictionary to map Unicode emojis to Slack-compatible names
+def build_emoji_slack_map():
+    emoji_slack_map = {}
+    for emoji in emoji_data_python.emoji_data:
+        # Slack uses some custom names, this maps known Unicode names to Slack's equivalent.
+        # You might need to manually adjust mappings for perfect compatibility.
+        slack_name = emoji.short_name.replace("-", "_")
+        emoji_slack_map[emoji.char] = slack_name
+    return emoji_slack_map
+
+
+emoji_slack_map = build_emoji_slack_map()
+
+
 # Function to generate the weekly message
 def generate_message_for_week():
     message_content = generate_weekly_message()
@@ -36,10 +50,8 @@ def generate_message_for_week():
 
 
 def get_slack_emoji_name(unicode_emoji):
-    for emoji in emoji_data_python.emoji_data:
-        if emoji.char == unicode_emoji:
-            return emoji.short_name.replace("_", "-")  # Slack often uses hyphens instead of underscores
-    return None
+    # Retrieve the Slack-compatible name from the map
+    return emoji_slack_map.get(unicode_emoji, "")
 
 
 # Function to post the weekly message
@@ -87,17 +99,16 @@ def extract_emojis_from_message_slack_format(message_content):
 # Extract emojis where the line starts with a number between 1 and 3
 def extract_emojis_from_message(message_content):
     print("Extracting emojis..")
+    emojis_in_message = []
     try:
-        emojis_in_message = []
         for line in message_content.split('\n'):
             if re.match(r'^[1-3]\.', line.strip()):
-                print("Line starts with a number.")
-                # Extract all emojis by checking each character
-                slack_emojis = [char for char in line if emoji.is_emoji(char)]
-                print(f"Slack Emojis: {slack_emojis}")
+                # Extract emojis from each line and convert them to Slack names
+                slack_emojis = [get_slack_emoji_name(char) for char in line if char in emoji_slack_map]
+                print(f"Found emojis: {slack_emojis}")
                 emojis_in_message.extend(slack_emojis)
         return emojis_in_message
-    except AttributeError as e:
+    except Exception as e:  # Broadening error handling to catch all exceptions
         logging.error(f"Failed to extract emojis due to: {str(e)}")
         return []
 

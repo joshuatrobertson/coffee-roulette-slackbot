@@ -7,6 +7,8 @@ import json
 import logging
 import emoji_data_python
 
+from slack_functions import get_slack_emoji_name, emoji_slack_map
+
 # Setup logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -42,17 +44,16 @@ def write_prompt(day):
 
 def extract_emojis_from_message(message_content):
     print("Extracting emojis..")
+    emojis_in_message = []
     try:
-        emojis_in_message = []
         for line in message_content.split('\n'):
             if re.match(r'^[1-3]\.', line.strip()):
-                print("Line starts with a number.")
-                # Extract all emojis by checking each character
-                slack_emojis = [char for char in line if emoji.is_emoji(char)]
-                print(f"Slack Emojis: {slack_emojis}")
+                # Extract emojis from each line and convert them to Slack names
+                slack_emojis = [get_slack_emoji_name(char) for char in line if char in emoji_slack_map]
+                print(f"Found emojis: {slack_emojis}")
                 emojis_in_message.extend(slack_emojis)
         return emojis_in_message
-    except AttributeError as e:
+    except Exception as e:  # Broadening error handling to catch all exceptions
         logging.error(f"Failed to extract emojis due to: {str(e)}")
         return []
 
