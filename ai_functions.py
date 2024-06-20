@@ -281,7 +281,7 @@ special_days = {
     '21-06': "Selfie Day",
     '22-06': "Onion Rings Day",
     '23-06': "Pink Day",
-    '24-06': "UFO Day",
+    '24-06': "National Take Back the Lunch Break Day",
     '25-06': "Log Cabin Day",
     '26-06': "Chocolate Pudding Day",
     '27-06': "Sunglasses Day",
