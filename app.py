@@ -82,5 +82,5 @@ scheduler.add_job(post_weekly_message, 'cron', hour=9, minute=0)
 scheduler.add_job(pair_users, 'cron', hour=9, minute=2)
 
 
-if __name__ == '__main__':
-    app.run(port=5000)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
