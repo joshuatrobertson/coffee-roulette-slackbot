@@ -2,7 +2,6 @@ import logging
 import os
 import random
 import datetime
-
 import emoji
 import emoji_data_python
 from dotenv import load_dotenv
