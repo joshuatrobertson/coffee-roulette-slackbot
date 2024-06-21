@@ -108,7 +108,7 @@ def extract_emojis_from_message(message_content):
                 print(f"Found emojis: {slack_emojis}")
                 emojis_in_message.extend(slack_emojis)
         return emojis_in_message
-    except Exception as e:  # Broadening error handling to catch all exceptions
+    except Exception as e:
         logging.error(f"Failed to extract emojis due to: {str(e)}")
         return []
 
