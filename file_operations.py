@@ -25,7 +25,7 @@ def read_reactions():
                 # Update the reaction for the user, overwriting any previous value so only 1 is stored
                 reactions[user_id] = reaction
     except FileNotFoundError:
-        print("No reactions file found.")
+        logging.error("No reactions file found.")
     return reactions
 
 
@@ -51,7 +51,7 @@ def store_message_ts(timestamp):
         # Rename temp file replacing the old file
         os.replace(temp_file_path, "timestamp_of_last_post.txt")
     except Exception as e:
-        print(f"Failed to write timestamp: {e}")
+        logging.error(f"Failed to write timestamp: {e}")
         # Cleanup if the rename failed
         if temp_file_path and os.path.exists(temp_file_path):
             os.unlink(temp_file_path)
@@ -62,11 +62,11 @@ def get_current_weekly_message_ts():
     try:
         with open("timestamp_of_last_post.txt", "r") as file:
             timestamp = file.read().strip()
-            print(f"Found timestamp from file: {timestamp}")
+            logging.info(f"Found timestamp from file: {timestamp}")
             return timestamp
     except FileNotFoundError:
-        print("Timestamp file not found. Ensure the message is posted first.")
+        logging.error("Timestamp file not found. Ensure the message is posted first.")
         return None
     except IOError as e:
-        print(f"Error reading timestamp file: {e}")
+        logging.error(f"Error reading timestamp file: {e}")
         return None
