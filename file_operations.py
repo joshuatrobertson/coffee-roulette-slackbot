@@ -1,3 +1,4 @@
+import logging
 import os
 import tempfile
 
@@ -8,7 +9,7 @@ BOT_USER_ID = os.getenv('SLACK_BOT_USER_ID')
 def log_reaction(user_id, reaction):
     with open("reactions.txt", "a") as file:
         file.write(f"{user_id},{reaction}\n")
-    print(f"Logged reaction {reaction} from user {user_id}")
+    logging.info(f"Logged reaction {reaction} from user {user_id}")
 
 
 # Function to read reactions from a file and add to dictionary (one 1 emoji entry per user_id)
