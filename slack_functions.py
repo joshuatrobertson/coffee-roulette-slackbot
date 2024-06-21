@@ -249,3 +249,6 @@ def message_trio(user1, user2, user3):
         logging.error(f"Failed to send message to {user2}: {response_2['error']}")
     if not response_3['ok']:
         logging.error(f"Failed to send message to {user2}: {response_2['error']}")
+
+
+        #test
