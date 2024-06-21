@@ -10,8 +10,6 @@ logging.basicConfig(level=logging.DEBUG)
 ibm_url = "https://bam-api.res.ibm.com/v2/text/generation?version=2024-03-19"
 
 
-
-
 def return_ibm_ai_prompt(prompt):
     ibm_api_key = os.getenv('IBM_API_KEY')
     ibm_header = {
@@ -53,8 +51,8 @@ def return_ibm_ai_prompt(prompt):
         logging.error(f"Error from IBM API: {response.status_code} - {response.text}")
     return None
 
-def write_prompt(day, channel):
 
+def write_prompt(day, channel):
     instructions = (
         "You are an AI language model developed by IBM. You are helpful and harmless and you follow ethical "
         "guidelines and promote positive behavior. Your outputs must adhere to strict formatting guidelines "
@@ -76,14 +74,17 @@ def write_prompt(day, channel):
         "you go straight into the post and question, don't write a greeting")
     return f"{instructions} {content}"
 
+
 def is_first_monday(date, season_start):
     if date.month == season_start.month and date.day >= season_start.day:
         if date.weekday() == 0:
             return date - datetime.timedelta(days=7) < season_start
     return False
 
+
 def generate_weekly_message():
     event = None
+    channel = os.getenv("SLACK_CHANNEL_ID")
     today = datetime.date.today()
     logging.debug(f"Today's date: {today}")
 
@@ -91,7 +92,7 @@ def generate_weekly_message():
     event = special_days.get(today_str, '')
     logging.info(f"Special day: {event}")
 
-    prompt = write_prompt(event)
+    prompt = write_prompt(event, channel)
     logging.debug(f"Generated prompt: {prompt}")
 
     response = return_ibm_ai_prompt(prompt)
