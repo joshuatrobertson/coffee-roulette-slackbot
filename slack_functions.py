@@ -57,9 +57,8 @@ def get_slack_emoji_name(unicode_emoji):
 
 # Function to post the weekly message
 def post_weekly_message(retry_count=0, max_retries=3):
-    channel = os.getenv("SLACK_CHANNEL_ID")
     channel_id = os.getenv("SLACK_CHANNEL_ID")
-    starting_line = f"Morning <!{channel}>, it's Monday which means time for #coffee-roulette!'"
+    starting_line = f"Morning <!{channel_id}>, it's Monday which means time for #coffee-roulette!'"
     if retry_count >= max_retries:
         print(f"Failed to post message after {max_retries} attempts. Emoji addition failed.")
         return
@@ -74,7 +73,7 @@ def post_weekly_message(retry_count=0, max_retries=3):
         return
 
     # Append the note only after confirming emoji count
-    message_content += ("\n\n\n-------+-------\n\n\n_This message was generated and posted by the CDSCoffeeRouletteBot "
+    message_content += ("\n\n\n-------+-------\n\n\n_This message was generated and posted by the CoffeeRouletteBot "
                         ":robot_face: using generative AI and therefore sometimes my output may be...interesting. For any "
                         "issues or bugs, please contact <@U06T3N4P2M8|josh>_ :josh-nyan-coffee:\n_Known bugs: none_ :smile:")
 
