@@ -74,7 +74,7 @@ def post_weekly_message(retry_count=0, max_retries=10):
     # Append the note only after confirming emoji count
     message_content += ("\n\n\n-------+-------\n\n\n_This message was generated and posted by the CoffeeRouletteBot "
                         ":robot_face: using generative AI and therefore sometimes my output may be...interesting. For any "
-                        "issues or bugs, please contact <@U06T3N4P2M8|josh>_ :josh-nyan-coffee:\n_Known bugs: none_ :smile:")
+                        "issues or bugs, please contact <@U02GDNQPE04|josh>_ :josh-nyan-coffee:\n_Known bugs: none_ :smile:")
 
     message_ts = slack_app.client.chat_postMessage(channel=channel_id, text=message_content)['ts']
     store_message_ts(message_ts)
@@ -98,7 +98,7 @@ def fetch_reactions_from_slack(message_ts):
         reactions_dict = {}
         for reaction in reactions:
             for user in reaction['users']:
-                if user != bot_user_id:
+                if user != bot_user_id:  # Ensure bot is not included
                     reactions_dict[user] = reaction['name']
         return reactions_dict
     except SlackApiError as e:
