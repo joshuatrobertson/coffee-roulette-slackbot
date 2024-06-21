@@ -46,7 +46,6 @@ emoji_slack_map = build_emoji_slack_map()
 # Function to generate the weekly message
 def generate_message_for_week():
     message_content = generate_weekly_message()
-    print("Message content in generate_weekly_message: " + message_content)
     return message_content
 
 
@@ -58,9 +57,9 @@ def get_slack_emoji_name(unicode_emoji):
 # Function to post the weekly message
 def post_weekly_message(retry_count=0, max_retries=3):
     channel_id = os.getenv("SLACK_CHANNEL_ID")
-    starting_line = f"<!@{channel_id}>"
+    starting_line = f"<#{channel_id}>"
     if retry_count >= max_retries:
-        print(f"Failed to post message after {max_retries} attempts. Emoji addition failed.")
+        logging.error(f"Failed to post message after {max_retries} attempts. Emoji addition failed.")
         return
     ai_message = generate_message_for_week()
     message_content = starting_line + "\n" + ai_message
@@ -68,7 +67,7 @@ def post_weekly_message(retry_count=0, max_retries=3):
     # Try to fetch the emojis
     emojis = extract_emojis_from_message(message_content)
     if len(emojis) != 3:
-        print("Error: Number of extracted emojis is not 3. Retrying...")
+        logging.error("Error: Number of extracted emojis is not 3. Retrying...")
         post_weekly_message(retry_count + 1, max_retries)
         return
 
@@ -82,12 +81,9 @@ def post_weekly_message(retry_count=0, max_retries=3):
 
     for emoji in emojis:
         try:
-            print("Adding Emoji", emoji)
             slack_app.client.reactions_add(channel=channel_id, name=emoji, timestamp=message_ts)
         except Exception as e:
-            print(f"Error adding reaction {emoji}: {e}")
             slack_app.client.chat_delete(channel=channel_id, ts=message_ts)
-            print("Deleted message due to emoji addition failure.")
             post_weekly_message(retry_count + 1, max_retries)  # Optionally retry if we don't have 3 emojis
             return
 
