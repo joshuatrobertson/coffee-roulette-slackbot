@@ -23,9 +23,9 @@ def return_ibm_ai_prompt(prompt):
         "input": prompt,
         "parameters": {
             "decoding_method": "greedy",
-            "temperature": 0.7,
-            "top_p": 0.85,
-            "top_k": 20,
+            "temperature": 0.3,
+            "top_p": 1,
+            "top_k": 60,
             "typical_p": 1,
             "repetition_penalty": 1.05,
             "stop_sequences": [
