@@ -61,8 +61,7 @@ def write_prompt(day, channel):
         "with no additional information or notes or any preamble.")
     content = (
         f"Start by generating a Slack post for Coffee Roulette. Your response and the post should begin with 'Good "
-        f"'Morning, it's Monday which means time for #coffee-roulette!' Today is {day} so mention "
-        f"this and ask a fun, related question that asks for a"
+        f"'Morning, it's Monday which means time for #coffee-roulette!' Mention today is {day} and ask a fun, related question that asks for a"
         "preference and then provide exactly three answers on new lines that users can vote against. Each answer must "
         "start on a new line and end with a contextually relevant emoji that matches the sentiment or"
         "content of the answer. The answers should be concise, no more than five words each and should include a "
