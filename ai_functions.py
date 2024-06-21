@@ -60,18 +60,7 @@ def write_prompt(day, channel):
         "beyond what is specified by the user. Ensure all responses include only the exact content requested, "
         "with no additional information or notes or any preamble.")
     content = (
-        f"Start by generating a Slack post for Coffee Roulette. Your response and the post should begin with 'Good "
-        f"'Morning, it's Monday which means time for #coffee-roulette!' Today is {day} so mention "
-        f"this and ask a fun, related question that asks for a"
-        "preference and then provide exactly three answers on new lines that users can vote against. Each answer must "
-        "start on a new line and end with a contextually relevant emoji that matches the sentiment or"
-        "content of the answer. The answers should be concise, no more than five words each and should include a "
-        "number and the answer. The answers should also include a single emoji and adher to the following format. "
-        "Here's how the answers should be formatted:\n"
-        "1. [First answer to question] [single relevant emoji]\n"
-        "2. [Second answer to question] [single relevant emoji]\n"
-        "3. [Third answer to question] [single relevant emoji]\n"
-        "Conclude with: 'React with your preference, and we'll match you for Coffee Roulette on Thursday!'")
+        f"Generate a Slack post for Coffee Roulette. The post should begin with ""Good Morning, it's Monday which means time for #coffee-roulette!"" Mention today is National Take Back The Lunch Day, and state that the question for the day is related to that occasion. Ask a fun, related question that asks for a preference and then provide exactly three answers on new lines that users can vote on. Each answer must start on a new line and end with a contextually relevant emoji that matches the sentiment or content of the answer. The answers should be concise, no more than five words each and should include a number and the answer. The answers should also include a single emoji and adhere to the following format: \n [First answer to question] [single relevant emoji] \n [Second answer to question] [single relevant emoji] \n [Third answer to question] [single relevant emoji] \n \nConclude with: ""React with your preference, and we'll match you for Coffee Roulette on Thursday!"")
     return f"{instructions} {content}"
 
 
