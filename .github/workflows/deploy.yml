@@ -28,7 +28,7 @@ jobs:
         docker push uk.icr.io/coffee-roulette-bot/aes-coffee-roulette-bot:latest
 
     - name: Log in to IBM Cloud  # Login after CLI installation
-      run: echo ${{ secrets.IBM_CLOUD_API_KEY }} | ibmcloud login --apikey-stdin -a https://cloud.ibm.com -r eu-gb 
+      run: ibmcloud login --apikey ${{ secrets.IBM_CLOUD_API_KEY }} -r eu-gb 
 
     - name: Update IBM Code Engine app
       run: |
