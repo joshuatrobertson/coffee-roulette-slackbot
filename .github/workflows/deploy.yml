@@ -16,6 +16,9 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
 
+    - name: Install IBM Cloud CLI  # Install CLI before login
+      run: curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+
     - name: Log in to IBM Cloud Container Registry
       run: echo ${{ secrets.IBM_CLOUD_API_KEY }} | ibmcloud login --apikey-stdin -a https://cloud.ibm.com -r eu-gb 
 
@@ -24,11 +27,8 @@ jobs:
         docker build -t uk.icr.io/coffee-roulette-bot/aes-coffee-roulette-bot:latest .
         docker push uk.icr.io/coffee-roulette-bot/aes-coffee-roulette-bot:latest
 
-    - name: Install IBM Cloud CLI
-      run: curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
-
-    - name: Log in to IBM Cloud
-      run: echo ${{ secrets.IBM_CLOUD_API_KEY }} | ibmcloud login --apikey-stdin -a https://cloud.ibm.com -r eu-gb  
+    - name: Log in to IBM Cloud  # Login after CLI installation
+      run: echo ${{ secrets.IBM_CLOUD_API_KEY }} | ibmcloud login --apikey-stdin -a https://cloud.ibm.com -r eu-gb 
 
     - name: Update IBM Code Engine app
       run: |
