@@ -58,7 +58,7 @@ def get_slack_emoji_name(unicode_emoji):
 # Function to post the weekly message
 def post_weekly_message(retry_count=0, max_retries=3):
     channel_id = os.getenv("SLACK_CHANNEL_ID")
-    starting_line = f"Morning <!{channel_id}>, it's Monday which means time for #coffee-roulette!'"
+    starting_line = f"<!@{channel_id}>"
     if retry_count >= max_retries:
         print(f"Failed to post message after {max_retries} attempts. Emoji addition failed.")
         return
