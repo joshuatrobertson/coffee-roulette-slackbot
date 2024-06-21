@@ -67,7 +67,7 @@ def post_weekly_message(retry_count=0, max_retries=10):
     # Try to fetch the emojis
     emojis = extract_emojis_from_message(message_content)
     if len(emojis) != 3:
-        logging.error("Error: Number of extracted emojis is not 3. Retrying...")
+        logging.error(f"Error: Number of extracted emojis is not 3 and is {emojis}. Retrying...")
         post_weekly_message(retry_count + 1, max_retries)
         return
 
