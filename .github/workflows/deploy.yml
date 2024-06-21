@@ -16,13 +16,13 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
 
-    - name: Install IBM Cloud CLI  # Install CLI before login
+    - name: Install IBM Cloud CLI
       run: curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
 
-    - name: Log in to IBM Cloud Container Registry
-      run: ibmcloud login --apikey ${{ secrets.IBM_CLOUD_API_KEY }} -r eu-gb 
+    - name: Log in to IBM Cloud
+      run: ibmcloud login --apikey ${{ secrets.IBM_CLOUD_API_KEY }} -r eu-gb
 
-    - name: Log in to IBM Cloud  # Login after CLI installation
+    - name: Log in to IBM Cloud Container Registry
       run: ibmcloud cr login
 
     - name: Build and push Docker image
