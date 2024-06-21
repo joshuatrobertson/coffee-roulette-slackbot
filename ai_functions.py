@@ -19,7 +19,7 @@ def return_ibm_ai_prompt(prompt):
 
     logging.debug(f"Generating prompt with IBM AI with bearer {ibm_api_key}")
     data = {
-        "model_id": "ibm-meta/llama-2-70b-chat-q",
+        "model_id": "kaist-ai/prometheus-8x7b-v2",
         "input": prompt,
         "parameters": {
             "decoding_method": "greedy",
