@@ -33,7 +33,7 @@ def return_ibm_ai_prompt(prompt):
             ],
             "include_stop_sequence": True,
             "min_new_tokens": 1,
-            "max_new_tokens": 400
+            "max_new_tokens": 200
         }
     }
     data_json = json.dumps(data)
@@ -52,7 +52,7 @@ def return_ibm_ai_prompt(prompt):
     return None
 
 
-def write_prompt(day, channel):
+def write_prompt(day):
     instructions = (
         "You are an AI language model developed by IBM. You are helpful and harmless and you follow ethical "
         "guidelines and promote positive behavior. Your outputs must adhere to strict formatting guidelines "
@@ -61,29 +61,15 @@ def write_prompt(day, channel):
         "with no additional information or notes or any preamble.")
     content = (
         f"Start by generating a Slack post for Coffee Roulette. Your response and the post should begin with 'Good "
-        f"'Morning, it's Monday which means time for #coffee-roulette!' Mention today is {day} and ask a fun, related question that asks for a"
-        "preference and then provide exactly three answers on new lines that users can vote against. Each answer must "
-        "start on a new line and end with a contextually relevant emoji that matches the sentiment or"
-        "content of the answer. The answers should be concise, no more than five words each and should include a "
-        "number and the answer. The answers should also include a single emoji and adher to the following format. "
-        "Here's how the answers should be formatted:\n"
-        "1. [First answer to question] [single relevant emoji]\n"
-        "2. [Second answer to question] [single relevant emoji]\n"
-        "3. [Third answer to question] [single relevant emoji]\n"
-        "Conclude with: 'React with your preference, and we'll match you for Coffee Roulette on Thursday!'")
+        f"'Morning, it's Monday which means time for #coffee-roulette!' Mention today is {day} and ask a fun, related question that asks for a preference and then provide exactly three answers on new lines that users can vote on. Each answer must start on a new line and end with a contextually relevant emoji that matches the sentiment or content of the answer. The answers should be concise, no more than five words each and should include a number and the answer. The answers should also include a single emoji and adhere to the following format:"
+        f"[First answer to question] [single relevant emoji]"
+        f"[Second answer to question] [single relevant emoji]"
+        f"[Third answer to question] [single relevant emoji] "
+        f"Conclude with: ""React with your preference, and we'll match you for Coffee Roulette on Wednesday!")
     return f"{instructions} {content}"
 
 
-def is_first_monday(date, season_start):
-    if date.month == season_start.month and date.day >= season_start.day:
-        if date.weekday() == 0:
-            return date - datetime.timedelta(days=7) < season_start
-    return False
-
-
 def generate_weekly_message():
-    event = None
-    channel = os.getenv("SLACK_CHANNEL_ID")
     today = datetime.date.today()
     logging.debug(f"Today's date: {today}")
 
@@ -91,7 +77,7 @@ def generate_weekly_message():
     event = special_days.get(today_str, '')
     logging.info(f"Special day: {event}")
 
-    prompt = write_prompt(event, channel)
+    prompt = write_prompt(event)
     logging.debug(f"Generated prompt: {prompt}")
 
     response = return_ibm_ai_prompt(prompt)
