@@ -36,9 +36,20 @@ def health_check():
     return jsonify(status='ok'), 200
 
 
+# List of authorized user IDs
+AUTHORIZED_USERS = []
+
+
+# Function to check if the user is authorized
+def is_user_authorized(user_id):
+    return user_id in AUTHORIZED_USERS
+
+
 @app.route('/slack/commands', methods=['POST'])
 def slack_commands():
-    command_text = request.form['text']
+    user_id = request.form['user_id']
+    if not is_user_authorized(user_id):
+        return jsonify(response_type="ephemeral", text="You are not authorized to use this command. Please reach out to <@U02GDNQPE04|josh>")
     command = request.form['command']  # The command text (e.g., "/coffee")
     print("Received a slash command:", request.form)
     # Check if the command is "/coffee"
@@ -71,21 +82,21 @@ def test():
 
 
 # Initialize the scheduler
-#scheduler = BackgroundScheduler(timezone=pytz.timezone('Europe/London'))
-#scheduler.start()
+scheduler = BackgroundScheduler(timezone=pytz.timezone('Europe/London'))
+scheduler.start()
 
-# Schedule the post_weekly_message function to run every Monday at 9:00 AM
-# scheduler.add_job(post_weekly_message, 'cron', day_of_week='mon', hour=9, minute=15) TODO: implement when live
+# Schedule the post_weekly_message function to run every Monday at 9:15 AM
+# scheduler.add_job(post_weekly_message, 'cron', day_of_week='mon', hour=9, minute=15)
 
 
-# Schedule the pair_users function to run every Wednesday at 1:00 PM
-# scheduler.add_job(pair_users, 'cron', day_of_week='wed', hour=13, minute=0) TODO: implement when live
+# Schedule the pair_users function to run every Thursday at 1:00 PM
+# scheduler.add_job(pair_users, 'cron', day_of_week='wed', hour=13, minute=0)
 
 # Modify to run the post_weekly_message function every day at 9:00 AM TODO: remove when live
-#scheduler.add_job(post_weekly_message, 'cron', hour=9, minute=0)
+# scheduler.add_job(post_weekly_message, 'cron', hour=9, minute=0)
 
 # Modify to run the pair_users function every day at 9:02 AM TODO: remove when live
-#scheduler.add_job(pair_users, 'cron', hour=9, minute=2)
+# scheduler.add_job(pair_users, 'cron', hour=9, minute=2)
 
 
 if __name__ == "__main__":
