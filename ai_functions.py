@@ -22,7 +22,7 @@ def return_ibm_ai_prompt(prompt):
         "model_id": "kaist-ai/prometheus-8x7b-v2",
         "input": prompt,
         "parameters": {
-            "decoding_method": "sampling",
+            "decoding_method": "sample",
             "temperature": 0.3,
             "top_p": 1,
             "top_k": 60,
