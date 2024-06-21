@@ -37,7 +37,7 @@ def health_check():
 
 
 # List of authorized user IDs
-AUTHORIZED_USERS = []
+AUTHORIZED_USERS = ['U02GDNQPE04']
 
 
 # Function to check if the user is authorized
