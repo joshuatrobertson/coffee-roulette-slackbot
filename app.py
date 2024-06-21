@@ -71,8 +71,8 @@ def test():
 
 
 # Initialize the scheduler
-scheduler = BackgroundScheduler(timezone=pytz.timezone('Europe/London'))
-scheduler.start()
+#scheduler = BackgroundScheduler(timezone=pytz.timezone('Europe/London'))
+#scheduler.start()
 
 # Schedule the post_weekly_message function to run every Monday at 9:00 AM
 # scheduler.add_job(post_weekly_message, 'cron', day_of_week='mon', hour=9, minute=15) TODO: implement when live
