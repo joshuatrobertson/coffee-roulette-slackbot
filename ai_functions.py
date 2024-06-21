@@ -19,11 +19,11 @@ def return_ibm_ai_prompt(prompt):
 
     logging.debug(f"Generating prompt with IBM AI with bearer {ibm_api_key}")
     data = {
-        "model_id": "meta-llama/llama-2-13b-chat",
+        "model_id": "ibm-meta/llama-2-70b-chat-q",
         "input": prompt,
         "parameters": {
-            "decoding_method": "sample",
-            "temperature": 0.3,
+            "decoding_method": "greedy",
+            "temperature": 0.7,
             "top_p": 0.85,
             "top_k": 20,
             "typical_p": 1,
