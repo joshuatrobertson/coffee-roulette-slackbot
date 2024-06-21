@@ -32,5 +32,5 @@ jobs:
 
     - name: Update IBM Code Engine app
       run: |
-        ibmcloud target -g <resource-group>
-        ibmcloud ce application update --name aes-coffee-roulette-bot --image us.icr.io/coffee-roulette-bot/aes-coffee-roulette-bot:latest
+        ibmcloud target -g coffee-roulette-bot
+        ibmcloud ce application update --name aes-coffee-roulette-bot --image uk.icr.io/coffee-roulette-bot/aes-coffee-roulette-bot:latest
