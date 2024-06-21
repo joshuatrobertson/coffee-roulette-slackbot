@@ -56,7 +56,7 @@ def slack_commands():
         # Call the function to delete the last post
         delete_last_post()
         # Acknowledge the command without sending a message to the channel
-        return jsonify(response_type="ephemeral", text="Users are being paired!")
+        return jsonify(response_type="ephemeral", text="The last post is being deleted!")
     else:
         # Handle other commands or provide a default response
         return jsonify({
