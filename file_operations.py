@@ -2,30 +2,33 @@ import logging
 import os
 import tempfile
 
-BOT_USER_ID = os.getenv('SLACK_BOT_USER_ID')
-
 
 # Function to log a user's reaction to a file
 def log_reaction(user_id, reaction):
-    with open("reactions.txt", "a") as file:
-        file.write(f"{user_id},{reaction}\n")
-        # log reactions for users
-    logging.info(f"Logged reaction {reaction} from user {user_id}")
+    try:
+        with open("reactions.txt", "a") as file:
+            file.write(f"{user_id},{reaction}\n")
+        logging.info(f"Logged reaction {reaction} from user {user_id}")
+    except Exception as e:
+        logging.error(f"Failed to log reaction: {e}")
 
 
 # Function to read reactions from a file and add to dictionary (one 1 emoji entry per user_id)
 def read_reactions():
     reactions = {}
+    bot_user_id = os.getenv('SLACK_BOT_USER_ID')
     try:
         with open("reactions.txt", "r") as file:
             for line in file:
                 user_id, reaction = line.strip().split(',')
-                if user_id == BOT_USER_ID:
+                if user_id == bot_user_id:
                     continue  # Skip adding reaction if it's from the bot
-                # Update the reaction for the user, overwriting any previous value so only 1 is stored
                 reactions[user_id] = reaction
+        logging.info(f"Read reactions: {reactions}")
     except FileNotFoundError:
-        logging.error("No reactions file found.")
+        logging.warning("No reactions file found.")
+    except Exception as e:
+        logging.error(f"Failed to read reactions: {e}")
     return reactions
 
 
