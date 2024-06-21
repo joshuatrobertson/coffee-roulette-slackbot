@@ -88,6 +88,23 @@ def post_weekly_message(retry_count=0, max_retries=10):
             return
 
 
+
+# Function to fetch reactions from Slack
+def fetch_reactions_from_slack(message_ts):
+    channel_id = os.getenv("SLACK_CHANNEL_ID")
+    try:
+        response = slack_app.client.reactions_get(channel=channel_id, timestamp=message_ts)
+        reactions = response.get('message', {}).get('reactions', [])
+        reactions_dict = {}
+        for reaction in reactions:
+            for user in reaction['users']:
+                if user != os.getenv('SLACK_BOT_USER_ID'):
+                    reactions_dict[user] = reaction['name']
+        return reactions_dict
+    except SlackApiError as e:
+        logging.error(f"Error fetching reactions: {e.response['error']}")
+        return {}
+
 # use a regex to match both "1. :emoji:" and "1: :emoji:"
 # TODO: Can remove if the below works, as better to input with actual emojis
 def extract_emojis_from_message_slack_format(message_content):
@@ -159,14 +176,14 @@ def handle_leftovers(leftover_users):
 
 
 def pair_users():
-    # Read from file
-    reactions = read_reactions()
-    # Group users by emoji and form pairs
-    leftover_users = form_pairs_and_notify_users(reactions)
-    # Randomly assign any leftovers
-    handle_leftovers(leftover_users)
-    # Clear reactions to start the roulette again
-    clear_reaction_logs()
+    # Get timestamp of the last bot post
+    current_ts = get_current_weekly_message_ts()
+    if current_ts:
+        reactions = fetch_reactions_from_slack(current_ts)
+        # Group users by emoji and form pairs
+        leftover_users = form_pairs_and_notify_users(reactions)
+        # Randomly assign any leftovers
+        handle_leftovers(leftover_users)
 
 
 def form_pairs_and_notify_users(reactions):
