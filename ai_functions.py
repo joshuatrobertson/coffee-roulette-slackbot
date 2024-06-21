@@ -8,16 +8,18 @@ import json
 logging.basicConfig(level=logging.DEBUG)
 
 ibm_url = "https://bam-api.res.ibm.com/v2/text/generation?version=2024-03-19"
-ibm_api_key = os.getenv('IBM_API_KEY')
 
 
-ibm_header = {
-    'Content-Type': 'application/json',
-    'Authorization': f'Bearer {ibm_api_key}'
-}
+
 
 def return_ibm_ai_prompt(prompt):
-    logging.debug(f"Generating prompt with IBM AI with bearer {os.getenv('IBM_API_KEY')}")
+    ibm_api_key = os.getenv('IBM_API_KEY')
+    ibm_header = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {ibm_api_key}'
+    }
+
+    logging.debug(f"Generating prompt with IBM AI with bearer {ibm_api_key}")
     data = {
         "model_id": "meta-llama/llama-2-13b-chat",
         "input": prompt,

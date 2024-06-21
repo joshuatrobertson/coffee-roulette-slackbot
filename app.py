@@ -1,7 +1,8 @@
 import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, request, jsonify
-from slack_functions import post_weekly_message, pair_users, handle_reaction_added
+from slack_functions import post_weekly_message, pair_users, handle_reaction_added, delete_last_post, \
+    get_last_message_ts
 
 app = Flask(__name__)
 
@@ -49,6 +50,11 @@ def slack_commands():
     elif command == "/pair":
         # Call the function to pair users
         pair_users()
+        # Acknowledge the command without sending a message to the channel
+        return jsonify(response_type="ephemeral", text="Users are being paired!")
+    elif command == "/delete":
+        # Call the function to delete the last post
+        delete_last_post()
         # Acknowledge the command without sending a message to the channel
         return jsonify(response_type="ephemeral", text="Users are being paired!")
     else:

@@ -7,11 +7,13 @@ import emoji_data_python
 from dotenv import load_dotenv
 from slack_bolt import App
 import re
+
+from slack_sdk.errors import SlackApiError
+
 from ai_functions import generate_weekly_message
 from file_operations import log_reaction, read_reactions, clear_reaction_logs, store_message_ts, \
     get_current_weekly_message_ts
 
-channel_id = "C06T4HJ4Y5Q"
 bot_added_emojis = []
 
 # Load environment variables from .env file
@@ -55,6 +57,8 @@ def get_slack_emoji_name(unicode_emoji):
 
 # Function to post the weekly message
 def post_weekly_message(retry_count=0, max_retries=3):
+    channel_id = os.getenv("SLACK_CHANNEL_ID")
+    user_id = os.getenv("SLACK_BOT_USER_ID")
     if retry_count >= max_retries:
         print(f"Failed to post message after {max_retries} attempts. Emoji addition failed.")
         return
@@ -215,6 +219,35 @@ def notify_users(pairs):
             message_trio(pair[0], pair[1], pair[2])
 
 
+def get_last_message_ts():
+    channel_id = os.getenv("SLACK_CHANNEL_ID")
+    user_id = os.getenv("SLACK_BOT_USER_ID")
+    try:
+        # Fetch messages from the channel
+        response = slack_app.client.conversations_history(channel=channel_id, limit=100)
+        messages = response.get('messages', [])
+
+        # Find the last message by the user
+        for message in messages:
+            if message.get('user') == user_id:
+                return message.get('ts')
+    except SlackApiError as e:
+        logging.error(f"Error fetching conversations: {e.response['error']}")
+    return None
+
+
+def delete_last_post():
+    channel_id = os.getenv("SLACK_CHANNEL_ID")
+    user_id = os.getenv("SLACK_BOT_USER_ID")
+    ts = get_last_message_ts()
+    try:
+        # Delete the message
+        response = slack_app.client.chat_delete(channel=channel_id, ts=ts)
+        logging.info(f"Deleted message: {response['ok']}")
+    except SlackApiError as e:
+        logging.error(f"Error deleting message with id {channel_id} and TS {ts}: {e.response['error']}")
+
+
 def notify_user_about_pairing_issue(user):
     slack_app.client.chat_postMessage(channel=user,
                                       text=f"Hi, <@{user}>, you were the only one who reacted to coffee roulette "
@@ -250,5 +283,4 @@ def message_trio(user1, user2, user3):
     if not response_3['ok']:
         logging.error(f"Failed to send message to {user2}: {response_2['error']}")
 
-
-        #test
+        # test
