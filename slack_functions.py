@@ -57,7 +57,7 @@ def get_slack_emoji_name(unicode_emoji):
 # Function to post the weekly message
 def post_weekly_message(retry_count=0, max_retries=10):
     channel_id = os.getenv("SLACK_CHANNEL_ID")
-    starting_line = f"<#{channel_id}>"
+    starting_line = f":nyan-josh-coffee: :coffee_parrot_1: <#{channel_id}> :nyan-josh-coffee: :coffee_parrot_1: "
     if retry_count >= max_retries:
         logging.error(f"Failed to post message after {max_retries} attempts. Emoji addition failed.")
         return
@@ -104,14 +104,6 @@ def fetch_reactions_from_slack(message_ts):
     except SlackApiError as e:
         logging.error(f"Error fetching reactions: {e.response['error']}")
         return {}
-
-
-# use a regex to match both "1. :emoji:" and "1: :emoji:"
-# TODO: Can remove if the below works, as better to input with actual emojis
-def extract_emojis_from_message_slack_format(message_content):
-    emoji_pattern = r'^\d[.:].*:(\w+):'
-    emojis_list = re.findall(emoji_pattern, message_content, flags=re.MULTILINE)
-    return emojis_list
 
 
 # Extract emojis where the line starts with a number between 1 and 3

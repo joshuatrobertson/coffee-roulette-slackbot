@@ -6,7 +6,6 @@ from slack_functions import handle_leftovers
 class TestHandleLeftovers(unittest.TestCase):
 
     @patch('slack_functions.notify_users')  # Patch the notify_users function
-    @patch('random.shuffle', lambda x: None)  # Mock shuffle to do nothing for predictability
     def test_pairs_passed_to_notify_users(self, mock_notify):
         users = ['user{}'.format(i) for i in range(21, 1)]  # 20 users, user1 to user20
         expected_pairs = [(users[i], users[i + 1]) for i in range(0, len(users) - 1, 2)]
