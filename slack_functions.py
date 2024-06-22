@@ -73,8 +73,9 @@ def post_weekly_message(retry_count=0, max_retries=10):
 
     # Append the note only after confirming emoji count
     message_content += ("\n\n\n-------+-------\n\n\n_This message was generated and posted by the CoffeeRouletteBot "
-                        ":robot_face: using generative AI and therefore sometimes my output may be...interesting. For any "
-                        "issues or bugs, please contact <@U02GDNQPE04|josh>_ :josh-nyan-coffee:\n_Known bugs: none_ :smile:")
+                        ":robot_face: using Watsonx generative AI APIs. For any "
+                        "issues or bugs, please contact <@U02GDNQPE04|josh>_ :josh-nyan-coffee:\n_Known bugs: none_ "
+                        ":slightly_smiling_face:")
 
     message_ts = slack_app.client.chat_postMessage(channel=channel_id, text=message_content)['ts']
     store_message_ts(message_ts)
@@ -168,10 +169,21 @@ def handle_leftovers(leftover_users):
     notify_users(pairs)
 
 
+def post_pairing_announcement(thread_ts):
+    channel_id = os.getenv("SLACK_CHANNEL_ID")
+    message = ("Pairing users now! Look out for a message from the bot and arrange a call! :telephone-calling-blue: "
+               ":coffee:")
+    try:
+        slack_app.client.chat_postMessage(channel=channel_id, text=message, thread_ts=thread_ts)
+    except SlackApiError as e:
+        logging.error(f"Error posting pairing announcement: {e.response['error']}")
+
+
 def pair_users():
     # Get timestamp of the last bot post
     current_ts = get_current_weekly_message_ts()
     if current_ts:
+        post_pairing_announcement(current_ts)
         reactions = fetch_reactions_from_slack(current_ts)
         # Group users by emoji and form pairs
         leftover_users = form_pairs_and_notify_users(reactions)
