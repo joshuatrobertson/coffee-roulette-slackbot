@@ -74,7 +74,7 @@ def post_weekly_message(retry_count=0, max_retries=10):
     # Append the note only after confirming emoji count
     message_content += ("\n\n\n-------+-------\n\n\n_This message was generated and posted by the CoffeeRouletteBot "
                         ":robot_face: using Watsonx generative AI APIs. For any "
-                        "issues or bugs, please contact <@U02GDNQPE04|josh>_ :josh-nyan-coffee:\n_Known bugs: none_ "
+                        "issues, bugs or suggestions, please contact <@U02GDNQPE04|josh>_ :josh-nyan-coffee:\n_Known bugs: none_ "
                         ":slightly_smiling_face:")
 
     message_ts = slack_app.client.chat_postMessage(channel=channel_id, text=message_content)['ts']
