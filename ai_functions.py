@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.DEBUG)
 ibm_url = "https://bam-api.res.ibm.com/v2/text/generation?version=2024-03-19"
 
 
-def return_ibm_ai_prompt(prompt):
+def return_ibm_watsonx_prompt(prompt):
     ibm_api_key = os.getenv('IBM_API_KEY')
     ibm_header = {
         'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ def generate_weekly_message():
     prompt = write_prompt(event)
     logging.debug(f"Generated prompt: {prompt}")
 
-    response = return_ibm_ai_prompt(prompt)
+    response = return_ibm_watsonx_prompt(prompt)
     if response is None:
         logging.error("Failed to generate message from IBM API")
         return "Failed to generate message"

@@ -49,7 +49,8 @@ def is_user_authorized(user_id):
 def slack_commands():
     user_id = request.form['user_id']
     if not is_user_authorized(user_id):
-        return jsonify(response_type="ephemeral", text="You are not authorized to use this command. Please reach out to <@U02GDNQPE04|josh>")
+        return jsonify(response_type="ephemeral", text="You are not authorised to use this command. Please reach out "
+                                                       "to <@U02GDNQPE04|josh>")
     command = request.form['command']  # The command text (e.g., "/coffee")
     print("Received a slash command:", request.form)
     # Check if the command is "/coffee"

@@ -11,8 +11,6 @@ import re
 from slack_sdk.errors import SlackApiError
 
 from ai_functions import generate_weekly_message
-from file_operations import log_reaction, read_reactions, clear_reaction_logs, store_message_ts, \
-    get_current_weekly_message_ts
 
 bot_added_emojis = []
 
@@ -78,7 +76,6 @@ def post_weekly_message(retry_count=0, max_retries=10):
                         ":slightly_smiling_face:")
 
     message_ts = slack_app.client.chat_postMessage(channel=channel_id, text=message_content)['ts']
-    store_message_ts(message_ts)
 
     for emoji in emojis:
         try:
@@ -124,24 +121,6 @@ def extract_emojis_from_message(message_content):
         return []
 
 
-# handles the reaction_added event - adds all emojis, so if a user reacts in any way to the post they will be matched
-@slack_app.event("reaction_added")
-def handle_reaction_added(event):
-    current_ts = get_current_weekly_message_ts()
-
-    try:
-        # Attempt to extract timestamp from event['item']
-        reaction_msg_ts = event['event']['item']['ts']
-        if reaction_msg_ts == current_ts:
-            user_id = event['event']['user']
-            reaction = event['event']['reaction']
-            log_reaction(user_id, reaction)
-
-    except KeyError as e:
-        logging.error(f"KeyError encountered: {str(e)}")
-        logging.error(f"Received event: {event}")
-
-
 def group_users_by_emoji(reactions):
     grouped_users = {}
     for user, emoji in reactions.items():
@@ -177,18 +156,6 @@ def post_pairing_announcement(thread_ts):
         slack_app.client.chat_postMessage(channel=channel_id, text=message, thread_ts=thread_ts)
     except SlackApiError as e:
         logging.error(f"Error posting pairing announcement: {e.response['error']}")
-
-
-def pair_users():
-    # Get timestamp of the last bot post
-    current_ts = get_current_weekly_message_ts()
-    if current_ts:
-        post_pairing_announcement(current_ts)
-        reactions = fetch_reactions_from_slack(current_ts)
-        # Group users by emoji and form pairs
-        leftover_users = form_pairs_and_notify_users(reactions)
-        # Randomly assign any leftovers
-        handle_leftovers(leftover_users)
 
 
 def form_pairs_and_notify_users(reactions):
@@ -269,15 +236,17 @@ def delete_last_post():
 def notify_user_about_pairing_issue(user):
     slack_app.client.chat_postMessage(channel=user,
                                       text=f"Hi, <@{user}>, you were the only one who reacted to coffee roulette "
-                                           f"this week, please try again next week")
+                                           f"this week :upside-down-face:, please try again next week")
 
 
 def message_pair(user1, user2):
     print(f"Sending message to pair: {user1}, {user2}")
     response_1 = slack_app.client.chat_postMessage(channel=user1,
-                                                   text=f"You've been paired with <@{user2}> for #coffee-roulette! Please arrange a meeting.")
+                                                   text=f"Hi, <@{user1}>, you've been paired with <@{user2}> for "
+                                                        f"#coffee-roulette! Please arrange a meeting.")
     response_2 = slack_app.client.chat_postMessage(channel=user2,
-                                                   text=f"You've been paired with <@{user1}> for #coffee-roulette! Please arrange a meeting.")
+                                                   text=f"Hi, <@{user2}>, you've been paired with <@{user1}> for "
+                                                        f"#coffee-roulette! Please arrange a meeting.")
 
     if not response_1['ok']:
         logging.error(f"Failed to send message to {user1}: {response_1['error']}")
@@ -288,11 +257,11 @@ def message_pair(user1, user2):
 def message_trio(user1, user2, user3):
     print(f"Sending message to trio: {user1}, {user2}, {user3}")
     response_1 = slack_app.client.chat_postMessage(channel=user1,
-                                                   text=f"You're in a trio with <@{user2}> and <@{user3}> for #coffee-roulette! Please arrange a meeting.")
+                                                   text=f"Hi, <@{user1}>, you're in a trio with <@{user2}> and <@{user3}> for #coffee-roulette! Please arrange a meeting.")
     response_2 = slack_app.client.chat_postMessage(channel=user2,
-                                                   text=f"You're in a trio with <@{user1}> and <@{user3}> for #coffee-roulette! Please arrange a meeting.")
+                                                   text=f"Hi, <@{user2}>, you're in a trio with <@{user1}> and <@{user3}> for #coffee-roulette! Please arrange a meeting.")
     response_3 = slack_app.client.chat_postMessage(channel=user3,
-                                                   text=f"You're in a trio with <@{user1}> and <@{user2}> for #coffee-roulette! Please arrange a meeting.")
+                                                   text=f"Hi, <@{user3}>, you're in a trio with <@{user1}> and <@{user2}> for #coffee-roulette! Please arrange a meeting.")
 
     if not response_1['ok']:
         logging.error(f"Failed to send message to {user1}: {response_1['error']}")
