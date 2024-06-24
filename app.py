@@ -1,10 +1,11 @@
 import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, request, jsonify
-from slack_functions import post_weekly_message, pair_users, handle_reaction_added, delete_last_post, \
+from slack_functions import post_weekly_message, pair_users, delete_last_post, \
     get_last_message_ts
 
 app = Flask(__name__)
+
 
 @app.route('/')
 def hello_world():
