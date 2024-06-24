@@ -150,7 +150,7 @@ def handle_leftovers(leftover_users):
 
 def pair_users():
     # Get timestamp of the last bot post
-    current_ts = get_current_weekly_message_ts()
+    current_ts = get_last_message_ts()
     if current_ts:
         reactions = fetch_reactions_from_slack(current_ts)
         # Group users by emoji and form pairs
