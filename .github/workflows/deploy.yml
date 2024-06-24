@@ -26,7 +26,7 @@ jobs:
       run: ibmcloud plugin install code-engine
 
     - name: Log in to IBM Cloud
-      run: ibmcloud login --apikey ${{ secrets.IBM_CLOUD_API_KEY }} -r eu-gb
+      run: ibmcloud login --apikey ${{ secrets.CDS_IBM_CLOUD_API_KEY }} -r eu-gb
 
     - name: Log in to IBM Cloud Container Registry
       run: ibmcloud cr login
