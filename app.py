@@ -7,11 +7,6 @@ from slack_functions import post_weekly_message, pair_users, delete_last_post, \
 app = Flask(__name__)
 
 
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
-
-
 @app.route('/health')
 def health_check():
     return jsonify(status='ok'), 200

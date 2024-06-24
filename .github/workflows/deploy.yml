@@ -3,7 +3,7 @@ name: Deploy to IBM Code Engine
 on:
   push:
     branches:
-      - main_aes
+      - main_cds
 
 jobs:
   build-and-deploy:
@@ -33,14 +33,14 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        docker build -t uk.icr.io/coffee-roulette-bot/aes-coffee-roulette-bot:latest .
-        docker push uk.icr.io/coffee-roulette-bot/aes-coffee-roulette-bot:latest
+        docker build -t uk.icr.io/coffee-roulette-bot/cds-coffee-roulette-bot:latest .
+        docker push uk.icr.io/coffee-roulette-bot/cds-coffee-roulette-bot:latest
 
     - name: Target resource group
       run: ibmcloud target -g coffee-roulette-bot
 
     - name: Select Code Engine project
-      run: ibmcloud ce project select -n aes-coffee-roulette-bot
+      run: ibmcloud ce project select -n cds-coffee-roulette-bot
 
     - name: Update IBM Code Engine app
-      run: ibmcloud ce application update --name aes-coffee-roulette-bot --image uk.icr.io/coffee-roulette-bot/aes-coffee-roulette-bot:latest
+      run: ibmcloud ce application update --name cds-coffee-roulette-bot --image uk.icr.io/coffee-roulette-bot/cds-coffee-roulette-bot:latest
