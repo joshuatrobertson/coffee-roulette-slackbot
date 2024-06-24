@@ -6,26 +6,6 @@ from slack_functions import post_weekly_message, pair_users, handle_reaction_add
 
 app = Flask(__name__)
 
-
-@app.route("/slack/events", methods=["POST"])
-def slack_events():
-    # Parse the incoming JSON
-    data = request.get_json()
-
-    # Slack sends a challenge request when you add or modify the request URL
-    if 'challenge' in data:
-        return jsonify({"challenge": data['challenge']})
-
-    # Here, you can handle other events
-    # For example, if data contains event information, process it accordingly
-    print("Received event:", data)
-
-    # Check if it's a reaction event and call the appropriate function
-    if data["event"]["type"] == "reaction_added":
-        handle_reaction_added(data)  # Call handle_reaction_event from slack_functions.py
-    return "OK", 200
-
-
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
