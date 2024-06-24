@@ -67,6 +67,7 @@ def post_weekly_message(retry_count=0, max_retries=10):
     if len(emojis) != 3:
         logging.error(f"Error: Number of extracted emojis is not 3 and is {emojis}. Retrying...")
         post_weekly_message(retry_count + 1, max_retries)
+
         return
 
     # Append the note only after confirming emoji count
