@@ -52,7 +52,6 @@ def slack_commands():
         return jsonify(response_type="ephemeral", text="You are not authorised to use this command. Please reach out "
                                                        "to <@U02GDNQPE04|josh>")
     command = request.form['command']  # The command text (e.g., "/coffee")
-    print("Received a slash command:", request.form)
     # Check if the command is "/coffee"
     if command == "/coffee":
         # Call the function to generate and post the weekly message
@@ -70,21 +69,16 @@ def slack_commands():
         # Acknowledge the command without sending a message to the channel
         return jsonify(response_type="ephemeral", text="The last post is being deleted!")
     else:
-        # Handle other commands or provide a default response
+        # provide a default response
         return jsonify({
             "response_type": "ephemeral",  # Only the user who typed the command will see this
             "text": f"Received command '{command}', but I don't know what to do with it."
         })
 
 
-@app.route('/test', methods=['POST'])
-def test():
-    return 'It works!', 200
-
-
 # Initialize the scheduler
-scheduler = BackgroundScheduler(timezone=pytz.timezone('Europe/London'))
-scheduler.start()
+# scheduler = BackgroundScheduler(timezone=pytz.timezone('Europe/London'))
+# scheduler.start()
 
 # Schedule the post_weekly_message function to run every Monday at 9:15 AM
 # scheduler.add_job(post_weekly_message, 'cron', day_of_week='mon', hour=9, minute=15)
