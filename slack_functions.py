@@ -74,6 +74,8 @@ def post_weekly_message(retry_count=0, max_retries=10):
                         ":robot_face: using Watsonx generative AI APIs. For any "
                         "issues, bugs or suggestions, please contact <@U02GDNQPE04|josh>_ :josh-nyan-coffee:\n_Known bugs: none_ "
                         ":slightly_smiling_face:")
+    logging.debug(f"SLACK_CHANNEL_ID: {os.getenv('SLACK_CHANNEL_ID')}")
+
 
     message_ts = slack_app.client.chat_postMessage(channel=channel_id, text=message_content)['ts']
 
