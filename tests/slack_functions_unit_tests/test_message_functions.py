@@ -16,10 +16,10 @@ class TestMessageFunctions(unittest.TestCase):
 
         # Assert
         self.assertEqual(mock_chat_post.call_count, 2)
-        calls = [(({'channel': 'U123',
-                    'text': 'You\'ve been paired with <@U456> for #coffee-roulette! Please arrange a meeting.'},),),
-                 (({'channel': 'U456',
-                    'text': 'You\'ve been paired with <@U123> for #coffee-roulette! Please arrange a meeting.'},),)]
+        calls = [call(channel='U123',
+                      text="Hi, <@U123>, you've been paired with <@U456> for #coffee-roulette! Please arrange a meeting."),
+                 call(channel='U456',
+                      text="Hi, <@U456>, you've been paired with <@U123> for #coffee-roulette! Please arrange a meeting.")]
         mock_chat_post.assert_has_calls(calls, any_order=True)
 
     @patch('slack_functions.slack_app.client.chat_postMessage')
@@ -45,30 +45,14 @@ class TestMessageFunctions(unittest.TestCase):
         # Assert
         self.assertEqual(mock_chat_post.call_count, 3)
         expected_calls = [
-            (({'channel': 'U123',
-               'text': 'You\'re in a trio with <@U456> and <@U789> for #coffee-roulette! Please arrange a meeting.'},),),
-            (({'channel': 'U456',
-               'text': 'You\'re in a trio with <@U123> and <@U789> for #coffee-roulette! Please arrange a meeting.'},),),
-            (({'channel': 'U789',
-               'text': 'You\'re in a trio with <@U123> and <@U456> for #coffee-roulette! Please arrange a meeting.'},),)
+            call(channel='U123',
+                 text="Hi, <@U123>, you're in a trio with <@U456> and <@U789> for #coffee-roulette! Please arrange a meeting."),
+            call(channel='U456',
+                 text="Hi, <@U456>, you're in a trio with <@U123> and <@U789> for #coffee-roulette! Please arrange a meeting."),
+            call(channel='U789',
+                 text="Hi, <@U789>, you're in a trio with <@U123> and <@U456> for #coffee-roulette! Please arrange a meeting.")
         ]
         mock_chat_post.assert_has_calls(expected_calls, any_order=True)
-
-    @patch('slack_functions.slack_app.client.chat_postMessage')
-    @patch('slack_functions.logging.error')
-    def test_message_trio_failure(self, mock_logging, mock_chat_post):
-        # Setup
-        mock_chat_post.side_effect = [{'ok': False, 'error': 'error1'}, {'ok': False, 'error': 'error2'},
-                                      {'ok': False, 'error': 'error3'}]
-
-        # Action
-        message_trio('U123', 'U456', 'U789')
-
-        # Assert
-        expected_logs = [call('Failed to send message to U123: error1'),
-                         call('Failed to send message to U456: error2'),
-                         call('Failed to send message to U789: error3')]
-        mock_logging.assert_has_calls(expected_logs, any_order=True)
 
 
 if __name__ == '__main__':

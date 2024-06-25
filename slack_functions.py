@@ -77,7 +77,6 @@ def post_weekly_message(retry_count=0, max_retries=10):
                         ":slightly_smiling_face:")
     logging.debug(f"SLACK_CHANNEL_ID: {os.getenv('SLACK_CHANNEL_ID')}")
 
-
     message_ts = slack_app.client.chat_postMessage(channel=channel_id, text=message_content)['ts']
 
     for emoji in emojis:
@@ -87,6 +86,15 @@ def post_weekly_message(retry_count=0, max_retries=10):
             slack_app.client.chat_delete(channel=channel_id, ts=message_ts)
             post_weekly_message(retry_count + 1, max_retries)  # Optionally retry if we don't have 3 emojis
             return
+
+
+def normalise_emoji(emoji_name):
+    # Extract the base part of the emoji, including the surrounding colons
+    base_emoji = emoji_name.split('::')[0]
+    # Ensure the base_emoji ends with a single colon
+    if not base_emoji.endswith(':'):
+        base_emoji += ':'
+    return base_emoji
 
 
 # Function to fetch reactions from Slack
@@ -113,7 +121,9 @@ def extract_emojis_from_message(message_content):
     emojis_in_message = []
     try:
         for line in message_content.split('\n'):
-            match = re.match(r'^[1-3]\.\s.*(:[a-zA-Z0-9_]+:)\s*$', line.strip())  # Check for lines starting with 1., 2., or 3. followed by space and ending with emoji
+            match = re.match(r'^[1-3]\.\s.*(:[a-zA-Z0-9_]+:)\s*$',
+                             line.strip())  # Check for lines starting with 1., 2., or 3. followed by space and
+            # ending with emoji
             if match:
                 # Find all emoji matches in the line
                 emoji_matches = re.findall(r':[a-zA-Z0-9_]+:', line)
@@ -126,10 +136,12 @@ def extract_emojis_from_message(message_content):
         logging.error(f"Failed to extract emojis due to: {str(e)}")
         return []
 
+
 def group_users_by_emoji(reactions):
     grouped_users = {}
     for user, emoji in reactions.items():
-        grouped_users.setdefault(emoji, []).append(user)
+        base_emoji = normalise_emoji(emoji)
+        grouped_users.setdefault(base_emoji, []).append(user)
     logging.info(f"Users grouped by emoji: {grouped_users}")
     return grouped_users
 
