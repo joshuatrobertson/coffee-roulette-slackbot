@@ -156,6 +156,17 @@ def pair_users():
     # Get timestamp of the last bot post
     current_ts = get_last_message_ts()
     if current_ts:
+        # Post a message indicating pairing is happening
+        channel_id = os.getenv("SLACK_CHANNEL_ID")
+        try:
+            slack_app.client.chat_postMessage(
+                channel=channel_id,
+                text="Pairing users now! Look out for a message from the bot and arrange a call! :telephone-calling-blue: :coffee:",
+                thread_ts=current_ts  # Post this message as a reply to the original post
+            )
+        except SlackApiError as e:
+            logging.error(f"Error posting pairing announcement: {e.response['error']}")
+
         reactions = fetch_reactions_from_slack(current_ts)
         # Group users by emoji and form pairs
         leftover_users = form_pairs_and_notify_users(reactions)
