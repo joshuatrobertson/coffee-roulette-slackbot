@@ -48,7 +48,7 @@ def generate_message_for_week():
 
 
 def get_slack_emoji_name(unicode_emoji):
-    # Retrieve the Slack-compatible name from the map
+    emoji_slack_map = {e.char: e.short_name.replace("-", "_") for e in emoji_data_python.emoji_data}
     return emoji_slack_map.get(unicode_emoji, "")
 
 
@@ -67,6 +67,7 @@ def post_weekly_message(retry_count=0, max_retries=10):
     if len(emojis) != 3:
         logging.error(f"Error: Number of extracted emojis is not 3 and is {emojis}. Retrying...")
         post_weekly_message(retry_count + 1, max_retries)
+
         return
 
     # Append the note only after confirming emoji count
@@ -74,6 +75,8 @@ def post_weekly_message(retry_count=0, max_retries=10):
                         ":robot_face: using Watsonx generative AI APIs. For any "
                         "issues, bugs or suggestions, please contact <@U02GDNQPE04|josh>_ :josh-nyan-coffee:\n_Known bugs: none_ "
                         ":slightly_smiling_face:")
+    logging.debug(f"SLACK_CHANNEL_ID: {os.getenv('SLACK_CHANNEL_ID')}")
+
 
     message_ts = slack_app.client.chat_postMessage(channel=channel_id, text=message_content)['ts']
 
@@ -106,20 +109,22 @@ def fetch_reactions_from_slack(message_ts):
 
 # Extract emojis where the line starts with a number between 1 and 3
 def extract_emojis_from_message(message_content):
-    print("Extracting emojis..")
+    logging.debug("Extracting emojis..")
     emojis_in_message = []
     try:
         for line in message_content.split('\n'):
-            if re.match(r'^[1-3]\.', line.strip()):
-                # Extract emojis from each line and convert them to Slack names
-                slack_emojis = [get_slack_emoji_name(char) for char in line if char in emoji_slack_map]
-                print(f"Found emojis: {slack_emojis}")
-                emojis_in_message.extend(slack_emojis)
+            match = re.match(r'^[1-3]\.\s.*(:[a-zA-Z0-9_]+:)\s*$', line.strip())  # Check for lines starting with 1., 2., or 3. followed by space and ending with emoji
+            if match:
+                # Find all emoji matches in the line
+                emoji_matches = re.findall(r':[a-zA-Z0-9_]+:', line)
+                if len(emoji_matches) == 1:  # Ensure only one emoji is present
+                    emoji_name = emoji_matches[0].strip(':')
+                    logging.debug(f"Found emoji: {emoji_name}")
+                    emojis_in_message.append(emoji_name)
         return emojis_in_message
     except Exception as e:
         logging.error(f"Failed to extract emojis due to: {str(e)}")
         return []
-
 
 def group_users_by_emoji(reactions):
     grouped_users = {}
