@@ -77,7 +77,6 @@ def post_weekly_message(retry_count=0, max_retries=10):
                         ":slightly_smiling_face:")
     logging.debug(f"SLACK_CHANNEL_ID: {os.getenv('SLACK_CHANNEL_ID')}")
 
-
     message_ts = slack_app.client.chat_postMessage(channel=channel_id, text=message_content)['ts']
 
     for emoji in emojis:
@@ -124,6 +123,8 @@ def extract_emojis_from_message(message_content):
     except Exception as e:
         logging.error(f"Failed to extract emojis due to: {str(e)}")
         return []
+
+
 def group_users_by_emoji(reactions):
     grouped_users = {}
     for user, emoji in reactions.items():
