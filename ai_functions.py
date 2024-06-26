@@ -29,7 +29,7 @@ def return_ibm_watsonx_prompt(prompt):
             "typical_p": 1,
             "repetition_penalty": 1.05,
             "stop_sequences": [
-                "React with your preference, and we'll match you for Coffee Roulette on Thursday!"
+                "React with your preference, and we'll match you for Coffee Roulette next week!"
             ],
             "include_stop_sequence": True,
             "min_new_tokens": 1,

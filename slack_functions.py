@@ -113,11 +113,13 @@ def extract_emojis_from_message(message_content):
     emojis_in_message = []
     try:
         for line in message_content.split('\n'):
-            if re.match(r'^[1-3]\.', line.strip()):
-                # Extract emojis from each line and convert them to Slack names
-                slack_emojis = [get_slack_emoji_name(char) for char in line if char in emoji_slack_map]
-                print(f"Found emojis: {slack_emojis}")
-                emojis_in_message.extend(slack_emojis)
+            line = line.strip()
+            if re.match(r'^\s*[1-3]\.\s*', line):
+                # Extract the last character if it's an emoji
+                if line and line[-1] in emoji_slack_map:
+                    slack_emoji = get_slack_emoji_name(line[-1])
+                    print(f"Found emoji: {slack_emoji}")
+                    emojis_in_message.append(slack_emoji)
         return emojis_in_message
     except Exception as e:
         logging.error(f"Failed to extract emojis due to: {str(e)}")
