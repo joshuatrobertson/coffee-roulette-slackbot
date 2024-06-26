@@ -161,7 +161,8 @@ def pair_users():
         try:
             slack_app.client.chat_postMessage(
                 channel=channel_id,
-                text="Pairing users now! Look out for a message from the bot and arrange a call! :telephone-calling-blue: :coffee:",
+                text="Pairing users now! Look out for a message from the bot and arrange a call! "
+                     ":telephone-calling-blue: :coffee:",
                 thread_ts=current_ts  # Post this message as a reply to the original post
             )
         except SlackApiError as e:
