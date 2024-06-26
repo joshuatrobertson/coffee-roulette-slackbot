@@ -113,8 +113,7 @@ def extract_emojis_from_message(message_content):
     emojis_in_message = []
     try:
         for line in message_content.split('\n'):
-            match = re.match(r'^[1-3]\.\s.*(:[a-zA-Z0-9_]+:)\s*$', line.strip())  # Check for lines starting with 1., 2., or 3. followed by space and ending with emoji
-            if match:
+            if re.match(r'^[1-3]\.', line.strip()):
                 # Extract emojis from each line and convert them to Slack names
                 slack_emojis = [get_slack_emoji_name(char) for char in line if char in emoji_slack_map]
                 print(f"Found emojis: {slack_emojis}")
