@@ -117,20 +117,17 @@ def fetch_reactions_from_slack(message_ts):
 
 # Extract emojis where the line starts with a number between 1 and 3
 def extract_emojis_from_message(message_content):
-    logging.debug("Extracting emojis..")
+    print("Extracting emojis..")
     emojis_in_message = []
     try:
         for line in message_content.split('\n'):
-            match = re.match(r'^[1-3]\.\s.*(:[a-zA-Z0-9_]+:)\s*$',
-                             line.strip())  # Check for lines starting with 1., 2., or 3. followed by space and
-            # ending with emoji
-            if match:
-                # Find all emoji matches in the line
-                emoji_matches = re.findall(r':[a-zA-Z0-9_]+:', line)
-                if len(emoji_matches) == 1:  # Ensure only one emoji is present
-                    emoji_name = emoji_matches[0].strip(':')
-                    logging.debug(f"Found emoji: {emoji_name}")
-                    emojis_in_message.append(emoji_name)
+            line = line.strip()
+            if re.match(r'^\s*[1-3]\.\s*', line):
+                # Extract the last character if it's an emoji
+                if line and line[-1] in emoji_slack_map:
+                    slack_emoji = get_slack_emoji_name(line[-1])
+                    print(f"Found emoji: {slack_emoji}")
+                    emojis_in_message.append(slack_emoji)
         return emojis_in_message
     except Exception as e:
         logging.error(f"Failed to extract emojis due to: {str(e)}")
