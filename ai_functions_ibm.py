@@ -1,77 +1,63 @@
 import datetime
 import logging
+
+import requests
 import os
 import json
-import requests
 
 from data import special_days, seasons
 
-# Google AI Studio API endpoint
-google_ai_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
+ibm_url = "https://bam-api.res.ibm.com/v2/text/generation?version=2024-03-19"
 
-# Get API key from environment variable
-google_api_key = os.getenv('GOOGLE_API_KEY')
+ibm_api_key = variable_value = os.getenv('IBM_API_KEY')
+
+ibm_header = {
+    'Content-Type': 'application/json',
+    'Authorization': f'Bearer {ibm_api_key}'
+}
 
 
-def return_google_ai_prompt(prompt):
+def return_ibm_ai_prompt(prompt):
     # Data payload for the POST request
     data = {
-        "contents": [
-            {
-                "parts": [
-                    {
-                        "text": prompt
-                    }
-                ]
-            }
-        ],
-        "generationConfig": {
+        "model_id": "meta-llama/llama-2-13b-chat",
+        "input": prompt,
+        "parameters": {
+            "decoding_method": "sample",
             "temperature": 0.3,
-            "topP": 0.85,
-            "topK": 20,
-            "maxOutputTokens": 400,
-            "stopSequences": [
+            "top_p": 0.85,
+            "top_k": 20,
+            "typical_p": 1,
+            "repetition_penalty": 1.05,
+            "stop_sequences": [
                 "React with your preference, and we'll match you for Coffee Roulette on Thursday!"
-            ]
+            ],
+            "include_stop_sequence": True,
+            "min_new_tokens": 1,
+            "max_new_tokens": 400
         }
     }
 
     # Convert the data dictionary to a JSON-formatted string
     data_json = json.dumps(data)
 
-    # Add API key to URL
-    url_with_key = f"{google_ai_url}?key={google_api_key}"
-
-    # Headers for the request
-    headers = {
-        'Content-Type': 'application/json'
-    }
-
     # Make the POST request to the API
-    response = requests.post(url_with_key, headers=headers, data=data_json)
+    response = requests.post(ibm_url, headers=ibm_header, data=data_json)
 
     # Check the status code to see if the request was successful
     if response.status_code == 200:
-        print("200 Response from Google AI API")
+        print("200 Response from IBM API")
         # Parse the JSON response
         response_data = response.json()
+        results = response_data.get('results', [])
 
-        # Extract generated text from Gemini response
-        if 'candidates' in response_data and response_data['candidates']:
-            generated_text = response_data['candidates'][0]['content']['parts'][0]['text']
+        # Check if results are available
+        if results:
+            # Extract 'generated_text' from the first result
+            generated_text = results[0].get('generated_text', 'No generated text available.')
             print(f"Generated text: {generated_text}")
             logging.info(f"Generated text: {generated_text}")
             return generated_text
-        else:
-            error_msg = "No generated text available in the response."
-            print(error_msg)
-            logging.error(error_msg)
-            return None
-    else:
-        error_msg = f"Error: {response.status_code}, {response.text}"
-        print(error_msg)
-        logging.error(error_msg)
-        return None
 
 
 def write_prompt(day):
@@ -112,8 +98,8 @@ def generate_weekly_message():
         season_start = datetime.date(today.year, month, day)
         if today == season_start or is_first_monday(today, season_start):
             print("Season: " + season_name)
-            event = season_name
-            break
+            event = (write_prompt(season_name))
+        break
 
     # Special Day check if not a season event
     if not event:
@@ -122,7 +108,8 @@ def generate_weekly_message():
         print("Special day: " + event)
 
     # Construct the prompt
-    prompt = write_prompt(event)
+    prompt = (write_prompt(event))
     print("Written prompt: " + prompt)
 
-    return return_google_ai_prompt(prompt)
+    return return_ibm_ai_prompt(prompt)
+

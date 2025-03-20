@@ -7,11 +7,11 @@ import emoji_data_python
 from dotenv import load_dotenv
 from slack_bolt import App
 import re
-from ai_functions import generate_weekly_message
+from ai_functions_ibm import generate_weekly_message
 from file_operations import log_reaction, read_reactions, clear_reaction_logs, store_message_ts, \
     get_current_weekly_message_ts
 
-channel_id = "C06T4HJ4Y5Q"
+channel_id = os.getenv("SLACK_CHANNEL_ID")
 bot_added_emojis = []
 
 # Load environment variables from .env file
